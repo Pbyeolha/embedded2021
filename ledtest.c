@@ -15,23 +15,20 @@
 static unsigned int ledValue=0;
 static int fd = 0;
 
-int ledOnOff(int ledNum, int onOff){
-    int i = 0; int j=0;
-    // i = i<<ledNum;
-    // ledValue = ledValue& (~i);
-    // if (onOff !=0) ledValue |= i
-    for(i=0; i<8; i++){ //bit 연산, led on
-        ledOnOff(i, 1);
+int main(int argc, char **argv){
+    int i=0; int j=0;
+    ledLibInit();
+
+    for(i=0; i<8; i++){
+        ledOnOff(i, 1); // led on
+        ledStatus();
     }
     for(j=0; j<8; j++){
-       ledOnOff(j, 0);
-    }  
+        ledOnOff(j, 0);
+        ledStatus();
+    }
+
+    ledLibExit();
+    return 0;
 }
 
-int ledLibInit(void){
-    ledValue=0;
-}
-
-int ledLibExit(void){
-    ledValue = 0;
-}
