@@ -1,16 +1,15 @@
-all : final.elf
+CC=arm-linux-gnueabi-gcc
+AR=arm-linux-gnueabi-ar
 
-final.elf : main.o 1.o 2.o
-	gcc main.o 1.o 2.o -o final.elf
+all: ledtest.elf
 
-main.o : main.c myProject.h
-	gcc main.c -c
+ledtest.elf: libMyPeri.a
+	$(CC) -l Myperi -L. -o ledtest.elf
 
-1.o : 1.c myProject.h
-	gcc 1.c -c
+libMyperi.a: led.o
+	$(AR) rc libMyperi.a led.o
 
-2.o : 2.c myProject.h
-	gcc 2.c -c
-
+led.o: led.c led.h
+	$(CC) -c led.c
 clean :
-	rm -rf *.o *.elf
+	rm -rf *.o *.elf *.a
