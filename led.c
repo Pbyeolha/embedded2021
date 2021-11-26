@@ -33,7 +33,9 @@ int ledOnOff(int ledNum, int onOff)
    
 }
 
-int ledStatus(void){}
+int ledStatus(void){
+   for(int i=0; i<8; i++) printf("%d led is on!\n", i);
+}
 
 int ledLibExit(void)
 {
