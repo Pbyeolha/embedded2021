@@ -10,8 +10,6 @@
 #include <unistd.h>
 #include "led.h"
 
-#define LED_DRIVER_NAME "/dev/periled"
-
 static unsigned int ledValue=0;
 static int fd = 0;
 
