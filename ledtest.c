@@ -20,12 +20,12 @@ int main(int argc, char **argv){
     ledLibInit();
 
     for(i=0; i<8; i++){
-        ledOnOff(i, 1); // led on
-        ledStatus();
+        ledOnOff(1, i); // led on
+        //ledStatus();
     }
     for(j=0; j<8; j++){
-        ledOnOff(j, 0);
-        ledStatus();
+        ledOnOff(0, j);
+        //ledStatus();
     }
 
     ledLibExit();
