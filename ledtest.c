@@ -19,14 +19,15 @@ int main(int argc, char **argv){
     for(int i=0;i<8;i++)
     {
         if(i==0) ledOnOff(1,1);
-        else if(i=1) ledOnOff(2,1);
-        else if(i=2)   ledOnOff(3,1);
-        else if(i=3)   ledOnOff(4,1);
-        else if(i=4)   ledOnOff(5,1);
-        else if(i=5) ledOnOff(6,1);
-        else if(i=6)  ledOnOff(7,1);
+        else if(i==1) ledOnOff(2,1);
+        else if(i==2)   ledOnOff(3,1);
+        else if(i==3)   ledOnOff(4,1);
+        else if(i==4)   ledOnOff(5,1);
+        else if(i==5) ledOnOff(6,1);
+        else if(i==6)  ledOnOff(7,1);
         else  ledOnOff(0,0);
     }
+    ledStatus();
     ledLibExit();
     return 0;
 }
