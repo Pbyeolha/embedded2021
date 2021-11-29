@@ -12,12 +12,13 @@ static int bass, snare, hi_hat, tomtom, crash, ride, floor_tom=0; //드럼구성
 
 int ledOnOff(int ledNum,int onOff)
 {
-   int i;
+   int i=1;
    i = i <<ledNum;
+   ledValue = ledValue & (~i);
    if (onOff != 0)
     ledValue |= i;
-   else ledValue = ledValue & (~i);
-   write(fd, &ledValue, 4);
+   //ledValue=ledNum;
+   write(fd, &ledValue, 8);
 }
 
 int ledLibInit(void)
@@ -42,11 +43,8 @@ int ledLibExit(void)
 }
 
 int ledStatus(void){
-   if(ledValue==0x01) printf("Bass Drum\n");
-   else if(ledValue==0x02) printf("Snare Drum\n");
-   else if(ledValue==0x03)   printf("Hi-Hat\n");
-   else if(ledValue==0x04)   printf("Tom Tom\n");
-   else if(ledValue==0x10)   printf("Floor Tom\n");
-   else if(ledValue==0x20) printf("Crash Cymbal\n");
-   else if(ledValue==0x30)  printf("Ride Cymbal\n");
+   for(int i=0;i<8;i++)
+   {
+      printf("%d led on :%d\n",i,(ledValue>>i)&1);
+   }
 }
