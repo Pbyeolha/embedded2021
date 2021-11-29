@@ -8,6 +8,7 @@
 
 static int fd = 0;
 static unsigned int ledValue = 0;
+static int bass, snare, hi_hat, tomtom, crash, ride, floor_tom=0; //드럼구성, global변수, 다른 app, lib에서도 사용 가능
 
 int ledLibInit(void)
 {
@@ -19,12 +20,12 @@ int ledLibInit(void)
       printf("led driver open error.\n");
       return 0;
    }
-
+   
    return 1;
 }
 int ledOnOff(int ledNum, int onOff)
 {
-   int i=1;
+   int i;
    i = i <<ledNum;
    ledValue = ledValue & (~i);
    if (onOff != 0)
@@ -34,7 +35,13 @@ int ledOnOff(int ledNum, int onOff)
 }
 
 int ledStatus(void){
-   for(int i=0; i<8; i++) printf("%d led is on!\n", i);
+   if(ledValue==0x01) printf("Bass Drum\n");
+   else if(ledValue==0x02) printf("Snare Drum\n");
+   else if(ledValue==0x03)   printf("Hi-Hat\n");
+   else if(ledValue==0x04)   printf("Tom Tom\n");
+   else if(ledValue==0x10)   printf("Floor Tom\n");
+   else if(ledValue==0x20) printf("Crash Cymbal\n");
+   else if(ledValue==0x30)  printf("Ride Cymbal\n");
 }
 
 int ledLibExit(void)
@@ -43,3 +50,4 @@ int ledLibExit(void)
    ledOnOff(0,0);
    close(fd);
 }
+
