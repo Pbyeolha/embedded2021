@@ -23,13 +23,14 @@ int ledLibInit(void)
    
    return 1;
 }
-int ledOnOff(int ledNum, int onOff)
+int ledOnOff(int ledNum)
 {
-   int i;
-   i = i <<ledNum;
-   ledValue = ledValue & (~i);
-   if (onOff != 0)
-      ledValue |= i;
+   // int i;
+   // i = i <<ledNum;
+   // ledValue = ledValue & (~i);
+   // if (onOff != 0)
+   //    ledValue |= i;
+   ledValue=ledNum;
    write(fd, &ledValue, 4);
    
 }
@@ -46,8 +47,8 @@ int ledStatus(void){
 
 int ledLibExit(void)
 {
-   ledValue=0;
-   ledOnOff(0,0);
+   // ledValue=0;
+   // ledOnOff(0,0);
    close(fd);
 }
 
