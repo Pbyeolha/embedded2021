@@ -10,9 +10,20 @@ static int fd = 0;
 static unsigned int ledValue = 0;
 static int bass, snare, hi_hat, tomtom, crash, ride, floor_tom=0; //드럼구성, global변수, 다른 app, lib에서도 사용 가능
 
+int ledOnOff(int ledNum,int onOff)
+{
+   int i;
+   i = i <<ledNum;
+   ledValue = ledValue & (~i);
+   if (onOff != 0)
+    ledValue |= i;
+   //ledValue=ledNum;
+   write(fd, &ledValue, 4);
+}
+
 int ledLibInit(void)
 {
-   fd = open(LED_DRIVER_NAME, O_RDWR);
+   fd = open(LED_DRIVER_NAME, O_WRONLY);
    ledValue = 0;
 
    if(fd < 0)
@@ -22,17 +33,6 @@ int ledLibInit(void)
    }
    
    return 1;
-}
-int ledOnOff(int ledNum)
-{
-   // int i;
-   // i = i <<ledNum;
-   // ledValue = ledValue & (~i);
-   // if (onOff != 0)
-   //    ledValue |= i;
-   ledValue=ledNum;
-   write(fd, &ledValue, 4);
-   
 }
 
 int ledStatus(void){
