@@ -15,19 +15,21 @@ int main(int argc, char** argv)
 {
     
     ledLibInit();
-    for (int i = 0; i < 8; i++)
-    {
+    while(1){
+        for (int i = 0; i < 8; i++)
+        {
       
-        ledOnOff(i, 1);
-        ledStatus();
-        //for(int j=0;j<10000000;j++);
-    }
-    for (int i = 0; i < 8; i++)
-    {
-        
-        ledOnOff(i, 0);
-        ledStatus();
-        //for(int j=0;j<10000000;j++);
+            ledOnOff(i, 1);
+            ledStatus();
+            sleep(1);
+        }
+        for (int i = 0; i < 8; i++)
+        {
+         
+            ledOnOff(i, 0);
+            ledStatus();
+            sleep(1);
+        }
     }
     sleep(10);
     ledLibExit();
