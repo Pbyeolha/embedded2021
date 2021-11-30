@@ -10,4 +10,4 @@ typedef struct{
 int buttonLibInit(void);
 int buttonLibExit(void);
 
-#endif _BUTTON_H_
+#endif
