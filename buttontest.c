@@ -30,8 +30,9 @@ int main(int argc, char *argv[]){
     BUTTON_MSG_T messageRx;
 
     returnValue=msgrcv(msgID, &messageRx, sizeof(messageRx.messageNum), 0 , 0);
-	while(1)
-	{
+	
+		if(returnValue<0)
+			printf("Key input fail\n");
 		switch(messageRx.keyInput)
 			{
 				case KEY_VOLUMEUP:	printf("Volume up key):");	break;
@@ -41,8 +42,8 @@ int main(int argc, char *argv[]){
 				case KEY_MENU:		printf("Menu key):");		break;
 				case KEY_VOLUMEDOWN:printf("Volume down key):");break;
 			}
-			
-	}
+			printf("\n");
+	
 	buttonLibExit();
     return 0;		
 }
