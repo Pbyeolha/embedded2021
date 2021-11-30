@@ -14,9 +14,9 @@
 
 static pthread_t buttonTh_id;
 static int fd = 0;
-static void* buttonThFunc(void* arg);
+static void* buttonThFunc();
 static int msgID = 0;
-char buttonPath[200];
+char buttonPath[200]={0,};
 
 int probeButtonPath(char *newPath)
 {
@@ -48,8 +48,8 @@ int probeButtonPath(char *newPath)
       }
    }
    fclose(fp);
-
-   if (returnValue == 1) sprintf (newPath,"%s%d",INPUT_DEVICE_LIST,number);
+   if (returnValue == 1) 
+      sprintf (newPath,"%s%d",INPUT_DEVICE_LIST,number);
    return returnValue;
 }
 static void* buttonThFunc()
@@ -59,27 +59,34 @@ static void* buttonThFunc()
     struct input_event stEvent;
     while (1)
     {
-        read(fd, &stEvent, sizeof (stEvent));
-        if ( ( stEvent.type == EV_KEY))
+        read(fd, &stEvent, sizeof(stEvent));
+        if ( ( stEvent.type == EV_KEY) && ( stEvent.value == 0))
         {
            messageTx.keyInput = stEvent.code;
-           messageTx.pressed = stEvent.value;
-           msgsnd(msgID, &messageTx, sizeof(messageTx)-sizeof(long int), 0);
+           //messageTx.pressed = stEvent.value;
+           msgsnd(msgID, &messageTx, sizeof(int), 0);
+           // sizeof(messageTx)-sizeof(long int)
         }
     }
 }
 
 int buttonLibInit(void)
 {
-    if (probeButtonPath(buttonPath) == 0) return 0;
+   printf("button start\n");
+    if (probeButtonPath(buttonPath) == 0){
+      printf("File error\n");
+      return 0;
+    } 
+    printf("buttonPath: %s\r\n",buttonPath);
 	fd=open (buttonPath, O_RDONLY);
 	msgID = msgget (MESSAGE_ID, IPC_CREAT|0666);
 	pthread_create(&buttonTh_id, NULL, buttonThFunc, NULL);
-	return 1;
+	return msgID;
 }
 
 int buttonLibExit(void)
 {
     pthread_cancel(buttonTh_id);
     close(fd);
+    printf("button finish\n");
 }
