@@ -5,7 +5,6 @@
 #include <unistd.h>
 #include <dirent.h>
 #include "buzzer.h"
-#define MAX_SCALE_STEP 8
 
 int main(int argc, char **argv)
 {
@@ -14,43 +13,46 @@ int main(int argc, char **argv)
         printf("error\n");
         return 0;
     }
+    buzzerInit();
+    sleep(3);
+
+    buzzerPlaySong(0);
+    sleep(2);
+    buzzerStopSong();
+
+    buzzerPlaySong(1);
+    sleep(2);
+    buzzerStopSong();
+
+    buzzerPlaySong(2);
+    sleep(2);
+    buzzerStopSong();
+
+    buzzerPlaySong(3);
+    sleep(2);
+    buzzerStopSong();
+
+    buzzerPlaySong(4);
+    sleep(2);
+    buzzerStopSong();
+
+    buzzerPlaySong(5);
+    sleep(2);
+    buzzerStopSong();
+
+    buzzerPlaySong(6);
+    sleep(2);
+    buzzerStopSong();
+
+    buzzerPlaySong(7);
+    sleep(2);
+    buzzerStopSong();
+
+    buzzerPlaySong(8);
+    sleep(2);
+    buzzerStopSong();
     
-    for(int i=0; i<10; i++)
-    {
-        buzzerPlaySong(0);
-        sleep(2);
-        buzzerStopSong();
+    buzzerExit();
 
-        buzzerPlaySong(1);
-        sleep(2);
-        buzzerStopSong();
-
-        buzzerPlaySong(2);
-        sleep(2);
-        buzzerStopSong();
-
-        buzzerPlaySong(3);
-        sleep(2);
-        buzzerStopSong();
-
-        buzzerPlaySong(4);
-        sleep(2);
-        buzzerStopSong();
-
-        buzzerPlaySong(5);
-        sleep(2);
-        buzzerStopSong();
-
-        buzzerPlaySong(6);
-        sleep(2);
-        buzzerStopSong();
-
-        buzzerPlaySong(7);
-        sleep(2);
-        buzzerStopSong();
-
-        buzzerPlaySong(8);
-        sleep(2);
-        buzzerStopSong();
-    }
+    return 1;
 }
