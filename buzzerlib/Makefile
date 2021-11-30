@@ -1,7 +1,7 @@
 CC=arm-linux-gnueabi-gcc
 AR=arm-linux-gnueabi-ar
 
-all: libMyPeri.a buzzertest
+all: buzzertest
 buzzertest: libMyPeri.a buzzertest.c buzzer.h
    $(CC) buzzertest.c -l MyPeri -L. -o buzzertest
 
