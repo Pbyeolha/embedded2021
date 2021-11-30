@@ -71,15 +71,21 @@ static void* buttonThFunc()
 
 int buttonLibInit(void)
 {
-    if (probeButtonPath(buttonPath) == 0) return 0;
+   printf("button start\n");
+    if (probeButtonPath(buttonPath) == 0){
+      printf("File error\n");
+      return 0;
+    } 
+    printf("buttonPath: %s\r\n",buttonPath);
 	fd=open (buttonPath, O_RDONLY);
 	msgID = msgget (MESSAGE_ID, IPC_CREAT|0666);
 	pthread_create(&buttonTh_id, NULL, buttonThFunc, NULL);
-	return 1;
+	return msgID;
 }
 
 int buttonLibExit(void)
 {
     pthread_cancel(buttonTh_id);
     close(fd);
+    printf("button finish\n");
 }
