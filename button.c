@@ -60,11 +60,12 @@ static void* buttonThFunc()
     while (1)
     {
         read(fd, &stEvent, sizeof(stEvent));
-        if ( ( stEvent.type == EV_KEY))
+        if ( ( stEvent.type == EV_KEY) && ( stEvent.value == 0))
         {
            messageTx.keyInput = stEvent.code;
-           messageTx.pressed = stEvent.value;
-           msgsnd(msgID, &messageTx, sizeof(messageTx)-sizeof(long int), 0);
+           //messageTx.pressed = stEvent.value;
+           msgsnd(msgID, &messageTx, sizeof(int), 0);
+           // sizeof(messageTx)-sizeof(long int)
         }
     }
 }
