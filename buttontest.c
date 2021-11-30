@@ -25,11 +25,11 @@
 // }
 
 int main(int argc, char *argv[]){
-    int msgID = buttonInit();
+    int msgID = buttonLibInit();
     int returnValue = 0; 
     BUTTON_MSG_T messageRx;
 
-    returnValue=msgrcv(msgID, &messageRx, sizeof(messaeRx.messageNum)), 0 , 0);
+    returnValue=msgrcv(msgID, &messageRx, sizeof(messageRx.messageNum), 0 , 0);
 	while(1)
 	{
 		switch(messageRx.keyInput)
@@ -41,8 +41,8 @@ int main(int argc, char *argv[]){
 				case KEY_MENU:		printf("Menu key):");		break;
 				case KEY_VOLUMEDOWN:printf("Volume down key):");break;
 			}
-		}	
+			
 	}
-	buttonLibExit():
+	buttonLibExit();
     return 0;		
 }
