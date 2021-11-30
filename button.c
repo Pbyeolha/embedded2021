@@ -14,9 +14,9 @@
 
 static pthread_t buttonTh_id;
 static int fd = 0;
-static void* buttonThFunc(void* arg);
+static void* buttonThFunc();
 static int msgID = 0;
-char buttonPath[200];
+char buttonPath[200]={0,};
 
 int probeButtonPath(char *newPath)
 {
@@ -48,8 +48,8 @@ int probeButtonPath(char *newPath)
       }
    }
    fclose(fp);
-
-   if (returnValue == 1) sprintf (newPath,"%s%d",INPUT_DEVICE_LIST,number);
+   if (returnValue == 1) 
+      sprintf (newPath,"%s%d",INPUT_DEVICE_LIST,number);
    return returnValue;
 }
 static void* buttonThFunc()
@@ -59,7 +59,7 @@ static void* buttonThFunc()
     struct input_event stEvent;
     while (1)
     {
-        read(fd, &stEvent, sizeof (stEvent));
+        read(fd, &stEvent, sizeof(stEvent));
         if ( ( stEvent.type == EV_KEY))
         {
            messageTx.keyInput = stEvent.code;
