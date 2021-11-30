@@ -3,7 +3,7 @@ AR=arm-linux-gnueabi-ar
 
 all: buttontest
 buttontest: libMyPeri.a buttontest.c button.h
-	$(CC) buttontest.c -l MyPeri -L. -o buttontest
+	$(CC) buttontest.c -l MyPeri -L. -o buttontest -lpthread
 
 libMyPeri.a: button.o led.o
 	$(AR) rc libMyPeri.a button.o led.o
