@@ -12,7 +12,7 @@ buzzer.o: buzzer.h buzzer.c
    $(CC) -c buzzer.c -o buzzer.o
 
 button.o : button.h button.c
-   $(CC) -c button.c -o button.o
+   $(CC) -c button.c -o button.o -lpthread
 
 led.o: led.h led.c
    $(CC) -c led.c -o led.o
