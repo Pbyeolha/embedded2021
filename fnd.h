@@ -13,6 +13,5 @@ typedef struct FNDWriteDataForm_tag
 }stFndWriteForm,*pStFndWriteForm;
 
 int fnDisp(int num, int dotflag);
-int fndOther(int mode, int number);
 
 #endif// __FND_DRV_H__
