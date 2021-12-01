@@ -28,7 +28,7 @@ int textLibInit(void){
     memset(&stlcd,0,sizeof(stTextLCD));
 }
 
-int lcdtextwrite(const char *str1, const char *str2, int lineFlag){
+int lcdtextwrite(const char *str1, const char *str2){
     linenum = strtol(str1, NULL, 10);
     printf("linenum: %d\n", linenum);
     if(linenum ==1) stlcd.cmdData=CMD_DATA_WRITE_LINE_1;
