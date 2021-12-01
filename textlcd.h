@@ -40,5 +40,7 @@ typedef struct TextLCD_tag
 	char	TextData[LINE_NUM][LINE_BUFF_NUM];
 }stTextLCD,*pStTextLCD;
 
-
+int textlcdLibInit(void);
+int lcdtextwrite(const char *str1, const char *str2, int lineFlag);
+int textlcdLibExit(void);
 #endif//  __TEXTLCD_DRV_H__
