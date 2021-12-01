@@ -17,7 +17,7 @@ stTextLCD  stlcd;
 int fd;
 int len; 
 
-int textLibInit(void){
+int textlcdLibInit(void){
     fd = open(TEXTLCD_DRIVER_NAME, O_RDWR);
 
     if(fd < 0)
@@ -52,6 +52,6 @@ int lcdtextwrite(const char *str1, const char *str2){
 
 }
 
-int textLibExit(void){
+int textlcdLibExit(void){
     close(fd);
 }
