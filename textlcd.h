@@ -41,6 +41,6 @@ typedef struct TextLCD_tag
 }stTextLCD,*pStTextLCD;
 
 int textlcdLibInit(void);
-int lcdtextwrite(const char *str1, const char *str2, int lineFlag);
+int lcdtextwrite(const char *str1, const char *str2;
 int textlcdLibExit(void);
 #endif//  __TEXTLCD_DRV_H__
