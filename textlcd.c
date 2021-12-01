@@ -8,7 +8,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
-#include "textlcddrv.h"
+#include "textlcd.h"
 
 #define TEXTLCD_DRIVER_NAME		"/dev/peritextlcd"
 
