@@ -11,7 +11,10 @@
 #include <unistd.h>
 #include "fnd.h"
 
-
+#define ONE_SEG_DISPLAY_TIME_USEC	1000
+#define MODE_STATIC_DIS		0
+#define MODE_TIME_DIS		1
+#define MODE_COUNT_DIS		2
 #define FND_DRIVER_NAME		"/dev/perifnd"
 
 void doHelp(void)
@@ -27,8 +30,6 @@ void doHelp(void)
 	printf("ex) fndtest c 10 ; display counting number  from  0  to  10  with 1 Second interval.\n");
 	printf("ex) fndtest 0		;display off \n");
 }
-
-#define ONE_SEG_DISPLAY_TIME_USEC	1000
 // return 1 => success  , 0 => error
 int fndDisp(int num , int dotflag)
 {
@@ -47,7 +48,7 @@ int fndDisp(int num , int dotflag)
 	temp = num % 10000;		stWriteData.DataNumeric[2] = temp /1000;
 	temp = num %1000;		stWriteData.DataNumeric[3] = temp /100;
 	temp = num %100;		stWriteData.DataNumeric[4] = temp /10;
-							stWriteData.DataNumeric[5] = num %10;
+	stWriteData.DataNumeric[5] = num %10;
 
 	fd = open(FND_DRIVER_NAME,O_RDWR);
 	if ( fd < 0 )
@@ -60,40 +61,35 @@ int fndDisp(int num , int dotflag)
 	return 1;
 }
 
-#define MODE_STATIC_DIS		0
-#define MODE_TIME_DIS		1
-#define MODE_COUNT_DIS		2
+// int fndOther(int mode, int number){
+//     int counter;
 
-int fndOther(int mode, int number){
-    int counter;
+//     if(mode == MODE_STATIC_DIS){
+//         fndDisp(number, 0);
+//     }
 
-    if(mode == MODE_STATIC_DIS){
-        fndDisp(number, 0);
-    }
+//     else if(mode == MODE_TIME_DIS){
+//         struct tm *ptmcur;
+//         time_t tTime;
+//         if(-1 == time(&tTime)) return -1;
 
-    else if(mode == MODE_TIME_DIS){
-        struct tm *ptmcur;
-        time_t tTime;
-        if(-1 == time(&tTime)) return -1;
+//         ptmcur = localtime(&tTime);
 
-        ptmcur = localtime(&tTime);
+//         number = ptmcur -> tm_hour*10000;
+//         number += ptmcur -> tm_min*100;
+//         number += ptmcur -> tm_sec;
 
-        number = ptmcur -> tm_hour*10000;
-        number += ptmcur -> tm_min*100;
-        number += ptmcur -> tm_sec;
+//         fndDisp(number, 0b1010);
+//     }
 
-        fndDisp(number, 0b1010);
-    }
-    
-    else if(mode==MODE_COUNT_DIS){
-        counter = 0;
-        while(1){
-            if(!fndDisp(counter, 0)) break;
-            counter ++;
-            sleep(1);
-            if(counter>number) break;
-        }
-    }
-	
-	return 0;
-}
+//     else if(mode==MODE_COUNT_DIS){
+//         counter = 0;
+//         while(1){
+//             if(!fndDisp(counter, 0)) break;
+//             counter ++;
+//             sleep(1);
+//             if(counter>number) break;
+//         }
+//     }
+// 	return 0;
+// }
