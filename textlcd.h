@@ -38,9 +38,9 @@ typedef struct TextLCD_tag
 	unsigned char reserved[2];
 	
 	char	TextData[LINE_NUM][LINE_BUFF_NUM];
-}stTextLCD,*pStTextLCD;
+}stTextLCD, *pStTextLCD;
 
 int textlcdLibInit(void);
-int lcdtextwrite(const char *str1, const char *str2;
+int lcdtextwrite(char *str1, char *str2);
 int textlcdLibExit(void);
 #endif//  __TEXTLCD_DRV_H__

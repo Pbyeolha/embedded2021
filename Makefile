@@ -1,12 +1,15 @@
 CC=arm-linux-gnueabi-gcc
 AR=arm-linux-gnueabi-ar
 
-all: fndtest
-fndtest: libMyPeri.a fndtest.c fnd.h
-	$(CC) fndtest.c -l MyPeri -L. -o fndtest
+all: textlcdtest
+textlcdtest: libMyPeri.a textlcdtest.c textlcd.h
+	$(CC) textlcdtest.c -l MyPeri -L. -o textlcdtest
 
-libMyPeri.a: button.o led.o buzzer.o fnd.o
-	$(AR) rc libMyPeri.a button.o led.o buzzer.o fnd.o
+libMyPeri.a: button.o led.o buzzer.o fnd.o textlcd.o
+	$(AR) rc libMyPeri.a button.o led.o buzzer.o fnd.o textlcd.o
+
+textlcd.o: textlcd.c textlcd.h
+	$(CC) -c textlcd.c -o textlcd.o
 
 fnd.o: fnd.c fnd.h
 	$(CC) -c fnd.c -o fnd.o
