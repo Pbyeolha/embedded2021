@@ -1,12 +1,18 @@
 CC=arm-linux-gnueabi-gcc
 AR=arm-linux-gnueabi-ar
 
-all: textlcdtest
-colorledtest: libMyPeri.a colorledtest.c colorled.h
-	$(CC) colorledtest.c -l MyPeri -L. -o colorledtest
+all: Gtest
+Gtest: libMyPeri.a Gtest.c G.h
+	$(CC) Gtest.c -l MyPeri -L. -o Gtest
 
-libMyPeri.a: button.o led.o buzzer.o fnd.o textlcd.o colorled.o
-	$(AR) rc libMyPeri.a button.o led.o buzzer.o fnd.o textlcd.o colorled.o
+libMyPeri.a: button.o led.o buzzer.o fnd.o textlcd.o colorled.o T.o G.o
+	$(AR) rc libMyPeri.a button.o led.o buzzer.o fnd.o textlcd.o colorled.o T.o G.o
+
+G.o: G.c G.h
+	$(CC) -c G.c -o G.o
+
+T.o: T.c temperature.h
+	$(CC) -c T.c -o T.o
 
 colorled.o: colorled.c colorled.h
 	$(CC) -c colorled.c -o colorled.o
