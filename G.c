@@ -23,7 +23,7 @@ int GFunc(void)
 
     //Magnetometer
     fd = open(MAGNEPATH "enable",O_WRONLY);
-    dpritnf(fd,"1");
+    dprintf(fd,"1");
     close(fd);
     fp = fopen(MAGNEPATH "data", "rt");
     int magne[3];
@@ -33,7 +33,7 @@ int GFunc(void)
 
     //Gyroscope
     fd = open(GYROPATH "enable",O_WRONLY);
-    dpritnf(fd,"1");
+    dprintf(fd,"1");
     close(fd);
     fp = fopen(GYROPATH "data", "rt");
     int gyro[3];
