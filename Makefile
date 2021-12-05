@@ -2,11 +2,14 @@ CC=arm-linux-gnueabi-gcc
 AR=arm-linux-gnueabi-ar
 
 all: textlcdtest
-textlcdtest: libMyPeri.a textlcdtest.c textlcd.h
-	$(CC) textlcdtest.c -l MyPeri -L. -o textlcdtest
+colorledtest: libMyPeri.a colorledtest.c colorled.h
+	$(CC) colorledtest.c -l MyPeri -L. -o colorledtest
 
-libMyPeri.a: button.o led.o buzzer.o fnd.o textlcd.o
-	$(AR) rc libMyPeri.a button.o led.o buzzer.o fnd.o textlcd.o
+libMyPeri.a: button.o led.o buzzer.o fnd.o textlcd.o colorled.o
+	$(AR) rc libMyPeri.a button.o led.o buzzer.o fnd.o textlcd.o colorled.o
+
+colorled.o: colorled.c colorled.h
+	$(CC) -c colorled.c -o colorled.o
 
 textlcd.o: textlcd.c textlcd.h
 	$(CC) -c textlcd.c -o textlcd.o
