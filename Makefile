@@ -5,8 +5,11 @@ all: Gtest
 Gtest: libMyPeri.a Gtest.c G.h
 	$(CC) Gtest.c -l MyPeri -L. -o Gtest
 
-libMyPeri.a: button.o led.o buzzer.o fnd.o textlcd.o colorled.o T.o G.o
-	$(AR) rc libMyPeri.a button.o led.o buzzer.o fnd.o textlcd.o colorled.o T.o G.o
+libMyPeri.a: button.o led.o buzzer.o fnd.o textlcd.o colorled.o T.o G.o bitmap.o
+	$(AR) rc libMyPeri.a button.o led.o buzzer.o fnd.o textlcd.o colorled.o T.o G.o bitmap.o
+
+bitmap.o: bitmap.c bitmap.h
+	$(CC) -c bitmap.c -o bitmap.o
 
 G.o: G.c G.h
 	$(CC) -c G.c -o G.o
