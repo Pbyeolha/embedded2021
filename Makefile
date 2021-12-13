@@ -1,13 +1,16 @@
 CC=arm-linux-gnueabi-gcc
 AR=arm-linux-gnueabi-ar
 
-all: Gtest
-Gtest: libMyPeri.a Gtest.c G.h
-	$(CC) Gtest.c -l MyPeri -L. -o Gtest
+all: touch
 
-libMyPeri.a: button.o led.o buzzer.o fnd.o textlcd.o colorled.o T.o G.o bitmap.o
-	$(AR) rc libMyPeri.a button.o led.o buzzer.o fnd.o textlcd.o colorled.o T.o G.o bitmap.o
+touch: libMyPeri.a touchtest.c touch.h
+	$(CC) touchtest.c -l MyPeri -L. -o touch -lpthread
 
+libMyPeri.a: button.o led.o buzzer.o fnd.o textlcd.o colorled.o T.o G.o bitmap.o touch.o
+	$(AR) rc libMyPeri.a button.o led.o buzzer.o fnd.o textlcd.o colorled.o T.o G.o bitmap.o touch.o
+
+touch.o: touch.c touch.h
+	$(CC) -c touch.c -o touch.o
 bitmap.o: bitmap.c bitmap.h
 	$(CC) -c bitmap.c -o bitmap.o
 
