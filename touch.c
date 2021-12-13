@@ -27,8 +27,8 @@ int probetouchPath(char *newPath)
    int number = 0;            //찾았다면 여기에 집어넣자
    FILE *fp = fopen(PROBE_FILE,"rt");   //파일을 열고
 
-   #define HAVE_TO_FIND_1    "N: Name=\"ecube-button\"\n" //cat/proc/bus/input/devices 찾아야함
-   #define HAVE_TO_FIND_2      "H: Handlers=kbd event" //이것도 찾아야함 
+   #define HAVE_TO_FIND_1    "N: Name=\"WaveShare WaveShare Touchscreen\"\n" //cat/proc/bus/input/devices 찾아야함
+   #define HAVE_TO_FIND_2      "H: Handlers=mouse0 event4" //이것도 찾아야함 
    while(!feof(fp))   //끝까지 읽어들인다.
    {
       char tmpStr[200];   //200자를 읽을 수 있게 버퍼
@@ -80,7 +80,7 @@ static void* touchThFunc()
 
 int touchLibInit(void)
 {
-    if (probetouchPath(buttonPath) == 0){
+    if (probetouchPath(touchPath) == 0){
       printf("File error\n");
       return 0;
     } 
