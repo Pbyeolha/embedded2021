@@ -28,7 +28,7 @@ int probetouchPath(char *newPath)
    FILE *fp = fopen(PROBE_FILE,"rt");   //파일을 열고
 
    #define HAVE_TO_FIND_1    "N: Name=\"WaveShare WaveShare Touchscreen\"\n" //cat/proc/bus/input/devices 찾아야함
-   #define HAVE_TO_FIND_2      "H: Handlers=mouse0 event4" //이것도 찾아야함 
+   #define HAVE_TO_FIND_2      "H: Handlers=mouse0 event" //이것도 찾아야함 
    while(!feof(fp))   //끝까지 읽어들인다.
    {
       char tmpStr[200];   //200자를 읽을 수 있게 버퍼
