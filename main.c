@@ -66,16 +66,8 @@ int main(int argc, char *argv[]){
         }  
 
         if(stage1 ==1){ //stage1
-            for(int i = 0; i<8; i++){
-                ledOnOff(i, 1);
-                ledStatus();
-                usleep(1);
-            }
-            for(int j = 0; j<8; j++){
-                ledOnOff(j, 0);
-                ledStatus();
-                usleep(1);
-            }
+            ledOnOff(2, 1);
+
             fndDisp(2, 0); //그림 2개 맞춰야 함
             show_bmp("./flower.bmp");
             returnValue1= msgrcv(msgIDt, &messageRxt sizeof(messageRxt.messageNum), 0, 0);
@@ -86,16 +78,7 @@ int main(int argc, char *argv[]){
 
         }
         else if(stage2 ==1){ //stage2
-            for(int i = 0; i<8; i++){
-                ledOnOff(i, 1);
-                ledStatus();
-                usleep(1);
-            }
-            for(int j = 0; j<8; j++){
-                ledOnOff(j, 0);
-                ledStatus();
-                usleep(1);
-            }
+            ledOnOff(4, 1);
             fndDisp(3, 0); //그림 3개 맞춰야 함
             show_bmp("./flower.bmp");
             returnValue1 = msgrcv(msgIDt, &messageRxt, sizeof(messageRxt.messageNum), 0, 0);
@@ -106,19 +89,9 @@ int main(int argc, char *argv[]){
 
         }
         else if(stage3 ==1){ //stage3
-            buzzerPlaySong(2);
-            sleep(1);
-            buzzerStopSong();
-            for(int i = 0; i<8; i++){
-                ledOnOff(i, 1);
-                ledStatus();
-                sleep(1);
-            }
-            for(int j = 0; j<8; j++){
-                ledOnOff(j, 0);
-                ledStatus();
-                sleep(1);
-            }
+ 
+                ledOnOff(6, 1);
+
             fndDisp(4, 0); //그림 4개 맞춰야 함
             show_bmp("./flower.bmp");
             returnValue1 = msgrcv(msgIDt, &messageRxt, sizeof(messageRxt.messageNum), 0, 0);
@@ -129,20 +102,11 @@ int main(int argc, char *argv[]){
 
         }
         else if(stage4 ==1){ //stage4
-            buzzerPlaySong(3);
-            sleep(1);
-            buzzerStopSong();
-            for(int i = 0; i<8; i++){
-                ledOnOff(i, 1);
-                ledStatus();
-                sleep(1);
-            }
-            for(int j = 0; j<8; j++){
-                ledOnOff(j, 0);
-                ledStatus();
-                sleep(1);
-            }
-            fndDisp(2, 0); //그림 5개 맞춰야 함
+
+                ledOnOff(8, 1);
+
+ 
+            fndDisp(5, 0); //그림 5개 맞춰야 함
             show_bmp("./flower.bmp");
             returnValue1 = msgrcv(msgID_touch, &messageRxt, sizeof(messageRxt.messageNum), 0, 0);
             if(messageRxt.messageNum == 1) //x좌표 
