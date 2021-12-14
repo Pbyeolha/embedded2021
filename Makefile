@@ -1,10 +1,10 @@
 CC=arm-linux-gnueabi-gcc
 AR=arm-linux-gnueabi-ar
 
-all: project
+all: Project
 
-project: libMyPeri.a main.c
-	$(CC) main.c -l MyPeri -L. -o project -lpthread
+Project: libMyPeri.a main.c
+	$(CC) main.c -l MyPeri -L. -o Project -lpthread
 
 libMyPeri.a: button.o led.o buzzer.o fnd.o textlcd.o bitmap.o touch.o
 	$(AR) rc libMyPeri.a button.o led.o buzzer.o fnd.o textlcd.o bitmap.o touch.o

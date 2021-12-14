@@ -17,7 +17,7 @@
 #include "touch.h"
 #include "bitmap.h"
 
-#define  INPUT_DEVICE_LIST	"/dev/input/event"
+#define  INPUT_DEVICE_LIST   "/dev/input/event"
 #define PROBE_FILE "/proc/bus/input/devices"
 #define HAVE_TO_FIND_1 "N: Name=\"ecube-button\"\n"
 #define HAVE_TO_FIND_2 "H: Handlers=kbd event"
@@ -27,20 +27,139 @@ int start = 0;
 int x, y = 0; 
 char filename[200] = {0,};
 
+static void *thread_song()
+{   
+    if(buzzerInit()==0)
+    {
+        printf("error\n");
+        return 0;
+    }
+    buzzerInit();
+    sleep(1);
+    while(1)
+    {
+    buzzerPlaySong(2); //미
+    sleep(1);
+    buzzerStopSong();
+
+    buzzerPlaySong(1); //레
+    sleep(1);
+    buzzerStopSong();
+
+    buzzerPlaySong(0); //도
+    sleep(1);
+    buzzerStopSong();
+
+    buzzerPlaySong(1); //레
+    sleep(1);
+    buzzerStopSong();
+
+    buzzerPlaySong(2); //미
+    sleep(1);
+    buzzerStopSong();
+
+    buzzerPlaySong(2); //미
+    sleep(1);
+    buzzerStopSong();
+
+    buzzerPlaySong(2); //미
+    sleep(1);
+    buzzerStopSong();
+
+    buzzerPlaySong(1); //레
+    sleep(1);
+    buzzerStopSong();
+
+    buzzerPlaySong(1); //레
+    sleep(1);
+    buzzerStopSong();
+
+    buzzerPlaySong(1); //레
+    sleep(1);
+    buzzerStopSong();
+
+    buzzerPlaySong(2); //미
+    sleep(1);
+    buzzerStopSong();
+
+    buzzerPlaySong(2); //미
+    sleep(1);
+    buzzerStopSong();
+
+    buzzerPlaySong(2); //미
+    sleep(1);
+    buzzerStopSong();
+
+    buzzerPlaySong(2); //미
+    sleep(1);
+    buzzerStopSong();
+
+    buzzerPlaySong(1); //레
+    sleep(1);
+    buzzerStopSong();
+
+    buzzerPlaySong(0); //도
+    sleep(1);
+    buzzerStopSong();
+
+    buzzerPlaySong(1); //레
+    sleep(1);
+    buzzerStopSong();
+
+    buzzerPlaySong(2); //미
+    sleep(1);
+    buzzerStopSong();
+
+    buzzerPlaySong(2); //미
+    sleep(1);
+    buzzerStopSong();
+
+    buzzerPlaySong(2); //미
+    sleep(1);
+    buzzerStopSong();
+
+    buzzerPlaySong(1); //레
+    sleep(1);
+    buzzerStopSong();
+
+    buzzerPlaySong(1); //레
+    sleep(1);
+    buzzerStopSong();
+
+    buzzerPlaySong(2); //미
+    sleep(1);
+    buzzerStopSong();
+
+    buzzerPlaySong(1); //레
+    sleep(1);
+    buzzerStopSong();
+
+    buzzerPlaySong(0); //도
+    sleep(1);
+    buzzerStopSong();
+    }
+}
+
 int main(int argc, char *argv[]){
+    pthread_t thread[2];
+    //=============song==============//
+      pthread_create(&thread[0], NULL, &thread_song, NULL);
+      pthread_join(thread_song,NULL);
+
+
     //=============init=============//
     ledLibInit();
     textlcdLibInit();
     buzzerInit();
 
     lcdtextwrite("1", "To Gamestart");
-    lcdtextwrite("2", "press Home key")
+    lcdtextwrite("2", "press Home key");
     //=============Game start=============//
     while(1){
     int msgID = buttonLibInit();
     int msgIDt = touchLibInit();
     int returnValue = 0; 
-    int returnValue = 1;
+    int returnValue1 = 1;
     BUTTON_MSG_T messageRx;
     TOUCH_MSG_T messageRxt;
 
@@ -70,7 +189,7 @@ int main(int argc, char *argv[]){
 
             fndDisp(2, 0); //그림 2개 맞춰야 함
             show_bmp("./flower.bmp");
-            returnValue1= msgrcv(msgIDt, &messageRxt sizeof(messageRxt.messageNum), 0, 0);
+            returnValue1= msgrcv(msgIDt, &messageRxt, sizeof(messageRxt.messageNum), 0, 0);
             if(messageRxt.messageNum == 1) //x좌표 
                 printf("x: %d \n", messageRxt.touchX);
             else if(messageRxt.messageNum == 2) //y좌표
@@ -84,7 +203,7 @@ int main(int argc, char *argv[]){
             returnValue1 = msgrcv(msgIDt, &messageRxt, sizeof(messageRxt.messageNum), 0, 0);
             if(messageRxt.messageNum == 1) //x좌표 
                 printf("x: %d \n", messageRxt.touchX);
-            else if(messageRx_t.messageNum == 2) //y좌표
+            else if(messageRxt.messageNum == 2) //y좌표
                 printf("y: %d \n", messageRxt.touchY);
 
         }
@@ -108,7 +227,7 @@ int main(int argc, char *argv[]){
  
             fndDisp(5, 0); //그림 5개 맞춰야 함
             show_bmp("./flower.bmp");
-            returnValue1 = msgrcv(msgID_touch, &messageRxt, sizeof(messageRxt.messageNum), 0, 0);
+            returnValue1 = msgrcv(msgIDt, &messageRxt, sizeof(messageRxt.messageNum), 0, 0);
             if(messageRxt.messageNum == 1) //x좌표 
                 printf("x: %d \n", messageRxt.touchX);
             else if(messageRxt.messageNum == 2) //y좌표
