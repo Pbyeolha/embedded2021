@@ -22,6 +22,29 @@ static int currentEmptyBufferPos = 0; //1 Pixel 4Byte Framebuffer
 #define PFBSIZE 			(fbHeight*fbWidth*sizeof(unsigned long)*2)	//Double Buffering
 #define DOUBLE_BUFF_START	(fbHeight*fbWidth)	///Double Swaping
 
+void show_bmp(char *path){
+    int screen_width;
+	int screen_height;
+	int bits_per_pixel;
+	int line_length;
+	int cols = 0, rows = 0;
+	char* data;
+
+    if(fb_init(&screen_width, &screen_height, &bits_per_pixel, &line_length) <0 ){
+        printf("FrameBuffer init fail\r\n");
+        return 0;
+    }
+
+    fb_clear();
+    if(read_bmp(path, &data, &cols, &rows) <0 ){
+        printf("file open fail\r\n");
+        return 0;
+    }
+
+    fb_write(data, cols, rows);
+    close_bmp();
+    fb_close();
+}
 
 void read_bmp(char *filename, char **data, int *cols, int *rows)
 {

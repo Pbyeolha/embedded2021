@@ -1,6 +1,7 @@
 #ifndef _BITMAP_H
 #define _BITMAP_H
 
+void show_bmp(char *path);
 void read_bmp(char *filename, char **data, int *cols, int *rows);
 void close_bmp(void);
 int fb_init(int *screen_width, int *screen_height, int *bits_per_pixel, int *line_length);
