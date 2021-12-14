@@ -17,8 +17,8 @@
 #include "touch.h"
 #include "bitmap.h"
 
-static int msgID_button = 0;
-static int msgID_touch = 0;
+int msgID_button = 0;
+int msgID_touch = 0;
 int returnvalue_button = 0;
 int returnvalue_touch = 0;
 int stage1, stage2, stage3, stage4 = 0;
@@ -31,18 +31,18 @@ TOUCH_MSG_T messageRx_t;
 int main(int argc, char *argv[]){
     //=============init=============//
     ledLibInit();
-    msgID_button = buttonLibInit();
+    //msgID_button = buttonLibInit();
     textlcdLibInit();
-    buzzerLibInit();
-    fndLibInit();
-    msgID_touch = touchLibInit();
+    buzzerInit();
+    //fndLibInit();
+    //msgID_touch = touchLibInit();
 
-    lcdtextwirte("To start:", "Press 1");
+    lcdtextwrite("To start:", "Press 1");
 
     //=============Game start=============//
-    whie(1){
-        returnvalue_button = msgrcv(msgID_button, &messageRx_b, sizeof(messageRx.messageNum), 0 , 0);
-        if(returnvalue_button <0 ) printf("key input fail!\n");
+    while(1){
+        returnvalue_button = msgrcv(msgID_button, &messageRx_b, sizeof(messageRx_b.messageNum), 0 , 0);
+        //if(returnvalue_button <0 ) printf("key input fail!\n");
         switch(messageRx_b.keyInput){
 			case KEY_VOLUMEUP:	printf("Game start:");	start = 1; break;
 			case KEY_HOME:		printf("1st stage:"); start = 1; stage1 = 1;	break;
@@ -69,10 +69,10 @@ int main(int argc, char *argv[]){
             fndDisp(2, 0); //그림 2개 맞춰야 함
             show_bmp("./flower.bmp");
             returnvalue_touch = msgrcv(msgID_touch, &messageRx_t, sizeof(messageRx_t.messageNum), 0, 0);
-            if(messageRx.messageNum == 1) //x좌표 
-                printf("x: %d \n", messageRx.touchX);
-            else if(messageRx.messageNum == 2) //y좌표
-                printf("y: %d \n", messageRx.touchY);
+            if(messageRx_t.messageNum == 1) //x좌표 
+                printf("x: %d \n", messageRx_t.touchX);
+            else if(messageRx_t.messageNum == 2) //y좌표
+                printf("y: %d \n", messageRx_t.touchY);
 
         }
     }
@@ -82,7 +82,7 @@ int main(int argc, char *argv[]){
     buttonLibExit();
     textlcdLibExit();
     buzzerLibExit();
-    fndLibExit();
+    //fndLibExit();
     touchLibExit();
 
     return 0;

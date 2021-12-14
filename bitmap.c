@@ -22,7 +22,7 @@ static int currentEmptyBufferPos = 0; //1 Pixel 4Byte Framebuffer
 #define PFBSIZE 			(fbHeight*fbWidth*sizeof(unsigned long)*2)	//Double Buffering
 #define DOUBLE_BUFF_START	(fbHeight*fbWidth)	///Double Swaping
 
-void show_bmp(char *path){
+int show_bmp(char *path){
     int screen_width;
 	int screen_height;
 	int bits_per_pixel;
@@ -44,9 +44,10 @@ void show_bmp(char *path){
     fb_write(data, cols, rows);
     close_bmp();
     fb_close();
+    return 0;
 }
 
-void read_bmp(char *filename, char **data, int *cols, int *rows)
+int read_bmp(char *filename, char **data, int *cols, int *rows)
 {
     BITMAPFILEHEADER    bmpHeader;
     BITMAPINFOHEADER    *bmpInfoHeader;
@@ -93,11 +94,13 @@ void read_bmp(char *filename, char **data, int *cols, int *rows)
     *rows   =   bmpInfoHeader->biHeight;
     *data   =   (char *)(*pDib + bmpHeader.bfOffBits - sizeof(bmpHeader) - 2);
     fclose(fp);
+    return 0;
 }
 
-void close_bmp(void)     // DIB(Device Independent Bitmap)
+int close_bmp(void)     // DIB(Device Independent Bitmap)
 {
     free(*pDib);
+    return 0;
 }
 
 int fb_init(int *screen_width, int *screen_height, int *bits_per_pixel, int *line_length){
@@ -153,7 +156,7 @@ int fb_init(int *screen_width, int *screen_height, int *bits_per_pixel, int *lin
     return -1;
 }
 
-void fb_clear(void){
+int fb_clear(void){
     int coor_y = 0; int coor_x = 0;
     for(coor_y = 0; coor_y < fbHeight; coor_y++){
         unsigned long *ptr = pfbmap + currentEmptyBufferPos + (fbWidth * coor_y);
@@ -164,9 +167,11 @@ void fb_clear(void){
     #ifdef ENABLED_DOUBLE_BUFFERING
         fb_doubleBufSwap();
     #endif
+
+    return 0;
 }
 
-void fb_doubleBufSwap(void){
+int fb_doubleBufSwap(void){
     if(currentEmptyBufferPos == 0){
         fbInfo.yoffset = 0;
         currentEmptyBufferPos = DOUBLE_BUFF_START;
@@ -176,16 +181,18 @@ void fb_doubleBufSwap(void){
         currentEmptyBufferPos = 0;
     }
     ioctl(fbfd, FBIOPUT_VSCREENINFO, &fbInfo);
+    return 0;
 }
 
-void fb_close(void){
+int fb_close(void){
     printf("Memory UnMapped!\r\n");
     munmap(pfbmap, PFBSIZE);
     printf("CloseFB\r\n");
     close(fbfd);
+    return 0;
 }
 
-void fb_write_reverse(char* picData, int picWidth, int picHeight){
+int fb_write_reverse(char* picData, int picWidth, int picHeight){
     int coor_x = 0; int coor_y = 0;
     int targetHeight = (fbHeight<picHeight)?fbHeight:picHeight;	//if Screen과 파일 사이즈가 안맞으면
 	int targetWidth = (fbWidth<picWidth)?fbWidth:picWidth;		//if Screen과 파일 사이즈가 안맞으면
@@ -207,9 +214,11 @@ void fb_write_reverse(char* picData, int picWidth, int picHeight){
 	#ifdef ENABLED_DOUBLE_BUFFERING
 		fb_doubleBufSwap();
 	#endif	
+
+    return 0;
 }
 
-void fb_write(char* picData, int picWidth, int picHeight)
+int fb_write(char* picData, int picWidth, int picHeight)
 {
 	int coor_y=0;
 	int coor_x=0;
@@ -233,4 +242,6 @@ void fb_write(char* picData, int picWidth, int picHeight)
 	#ifdef ENABLED_DOUBLE_BUFFERING
 		fb_doubleBufSwap();
 	#endif
+
+    return 0;
 }
