@@ -22,96 +22,90 @@
 #define HAVE_TO_FIND_1 "N: Name=\"ecube-button\"\n"
 #define HAVE_TO_FIND_2 "H: Handlers=kbd event"
 
-int msgID_button = 0;
-int msgID_touch = 0;
-int returnvalue_button = 0;
-int returnvalue_touch = 0;
 int stage1, stage2, stage3, stage4 = 0;
 int start = 0;
 int x, y = 0; 
 char filename[200] = {0,};
-BUTTON_MSG_T messageRx_b;
-TOUCH_MSG_T messageRx_t;
 
 int main(int argc, char *argv[]){
     //=============init=============//
     ledLibInit();
-    //msgID_button = buttonLibInit();
     textlcdLibInit();
     buzzerInit();
-    //fndLibInit();
-    //msgID_touch = touchLibInit();
 
-    lcdtextwrite("1", "Press 1");
-
+    lcdtextwrite("1", "To Gamestart");
+    lcdtextwrite("2", "press Home key")
     //=============Game start=============//
     while(1){
     int msgID = buttonLibInit();
+    int msgIDt = touchLibInit();
     int returnValue = 0; 
+    int returnValue = 1;
     BUTTON_MSG_T messageRx;
+    TOUCH_MSG_T messageRxt;
 
     returnValue=msgrcv(msgID, &messageRx, sizeof(messageRx.messageNum), 0 , 0);
    
       if(returnValue<0)
          printf("Key input fail\n");
+
       switch(messageRx.keyInput)
-         {
+        {
             case KEY_VOLUMEUP:   printf("Volume up key):"); stage4=1;  break;
             case KEY_HOME:      printf("Home key):"); start=1;     break;
             case KEY_SEARCH:   printf("Search key):"); stage2=1;     break;
             case KEY_BACK:      printf("Back key):"); stage1=1;     break;
             case KEY_MENU:      printf("Menu key):"); stage3=1;     break;
             case KEY_VOLUMEDOWN:printf("Volume down key):");break;
-         }
-         printf("\n");
+        }
+        printf("\n");
+        if(start ==1){ //start
+            ledOnOff(8, 1);
+            lcdtextwrite("1", "hello!\n");
+            lcdtextwrite("2", "Have a nice playing\n");
+        }  
 
         if(stage1 ==1){ //stage1
-            buzzerPlaySong(0);
-            sleep(1);
-            buzzerStopSong();
             for(int i = 0; i<8; i++){
                 ledOnOff(i, 1);
                 ledStatus();
-                sleep(1);
+                usleep(1);
             }
             for(int j = 0; j<8; j++){
                 ledOnOff(j, 0);
                 ledStatus();
-                sleep(1);
+                usleep(1);
             }
             fndDisp(2, 0); //그림 2개 맞춰야 함
             show_bmp("./flower.bmp");
-            returnvalue_touch = msgrcv(msgID_touch, &messageRx_t, sizeof(messageRx_t.messageNum), 0, 0);
-            if(messageRx_t.messageNum == 1) //x좌표 
-                printf("x: %d \n", messageRx_t.touchX);
-            else if(messageRx_t.messageNum == 2) //y좌표
-                printf("y: %d \n", messageRx_t.touchY);
+            returnValue1= msgrcv(msgIDt, &messageRxt sizeof(messageRxt.messageNum), 0, 0);
+            if(messageRxt.messageNum == 1) //x좌표 
+                printf("x: %d \n", messageRxt.touchX);
+            else if(messageRxt.messageNum == 2) //y좌표
+                printf("y: %d \n", messageRxt.touchY);
 
         }
-        else if(stage2 ==1){ //stage1
-            buzzerPlaySong(1);
-            sleep(1);
-            buzzerStopSong();
+        else if(stage2 ==1){ //stage2
             for(int i = 0; i<8; i++){
                 ledOnOff(i, 1);
                 ledStatus();
-                sleep(1);
+                usleep(1);
             }
             for(int j = 0; j<8; j++){
                 ledOnOff(j, 0);
                 ledStatus();
-                sleep(1);
+                usleep(1);
             }
-            fndDisp(2, 0); //그림 2개 맞춰야 함
+            fndDisp(3, 0); //그림 3개 맞춰야 함
             show_bmp("./flower.bmp");
-            returnvalue_touch = msgrcv(msgID_touch, &messageRx_t, sizeof(messageRx_t.messageNum), 0, 0);
-            if(messageRx_t.messageNum == 1) //x좌표 
-                printf("x: %d \n", messageRx_t.touchX);
+            returnValue1 = msgrcv(msgIDt, &messageRxt, sizeof(messageRxt.messageNum), 0, 0);
+            if(messageRxt.messageNum == 1) //x좌표 
+                printf("x: %d \n", messageRxt.touchX);
             else if(messageRx_t.messageNum == 2) //y좌표
-                printf("y: %d \n", messageRx_t.touchY);
+                printf("y: %d \n", messageRxt.touchY);
 
         }
-        else if(stage3 ==1){ //stage1
+        else if(stage3 ==1){ //stage3
             buzzerPlaySong(2);
             sleep(1);
             buzzerStopSong();
@@ -125,16 +119,16 @@ int main(int argc, char *argv[]){
                 ledStatus();
                 sleep(1);
             }
-            fndDisp(2, 0); //그림 2개 맞춰야 함
+            fndDisp(4, 0); //그림 4개 맞춰야 함
             show_bmp("./flower.bmp");
-            returnvalue_touch = msgrcv(msgID_touch, &messageRx_t, sizeof(messageRx_t.messageNum), 0, 0);
-            if(messageRx_t.messageNum == 1) //x좌표 
-                printf("x: %d \n", messageRx_t.touchX);
-            else if(messageRx_t.messageNum == 2) //y좌표
-                printf("y: %d \n", messageRx_t.touchY);
+            returnValue1 = msgrcv(msgIDt, &messageRxt, sizeof(messageRxt.messageNum), 0, 0);
+            if(messageRxt.messageNum == 1) //x좌표 
+                printf("x: %d \n", messageRxt.touchX);
+            else if(messageRxt.messageNum == 2) //y좌표
+                printf("y: %d \n", messageRxt.touchY);
 
         }
-        else if(stage4 ==1){ //stage1
+        else if(stage4 ==1){ //stage4
             buzzerPlaySong(3);
             sleep(1);
             buzzerStopSong();
@@ -148,36 +142,13 @@ int main(int argc, char *argv[]){
                 ledStatus();
                 sleep(1);
             }
-            fndDisp(2, 0); //그림 2개 맞춰야 함
+            fndDisp(2, 0); //그림 5개 맞춰야 함
             show_bmp("./flower.bmp");
-            returnvalue_touch = msgrcv(msgID_touch, &messageRx_t, sizeof(messageRx_t.messageNum), 0, 0);
-            if(messageRx_t.messageNum == 1) //x좌표 
-                printf("x: %d \n", messageRx_t.touchX);
-            else if(messageRx_t.messageNum == 2) //y좌표
-                printf("y: %d \n", messageRx_t.touchY);
-
-        }
-        if(start ==1){ //stage1
-            buzzerPlaySong(4);
-            sleep(1);
-            buzzerStopSong();
-            for(int i = 0; i<8; i++){
-                ledOnOff(i, 1);
-                ledStatus();
-                sleep(1);
-            }
-            for(int j = 0; j<8; j++){
-                ledOnOff(j, 0);
-                ledStatus();
-                sleep(1);
-            }
-            fndDisp(2, 0); //그림 2개 맞춰야 함
-            show_bmp("./flower.bmp");
-            returnvalue_touch = msgrcv(msgID_touch, &messageRx_t, sizeof(messageRx_t.messageNum), 0, 0);
-            if(messageRx_t.messageNum == 1) //x좌표 
-                printf("x: %d \n", messageRx_t.touchX);
-            else if(messageRx_t.messageNum == 2) //y좌표
-                printf("y: %d \n", messageRx_t.touchY);
+            returnValue1 = msgrcv(msgID_touch, &messageRxt, sizeof(messageRxt.messageNum), 0, 0);
+            if(messageRxt.messageNum == 1) //x좌표 
+                printf("x: %d \n", messageRxt.touchX);
+            else if(messageRxt.messageNum == 2) //y좌표
+                printf("y: %d \n", messageRxt.touchY);
 
         }
     }
@@ -187,7 +158,6 @@ int main(int argc, char *argv[]){
     buttonLibExit();
     textlcdLibexit();
     buzzerExit();
-    //fndLibExit();
     touchLibExit();
 
     return 0;
