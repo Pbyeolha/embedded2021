@@ -1,49 +1,60 @@
 #include <stdio.h>
-#include <stdlib.h>     // for exit
+#include <stdlib.h>
+#include <malloc.h>
+#include <string.h>
 #include <unistd.h>     // for open/close
 #include <fcntl.h>      // for O_RDWR
 #include <sys/ioctl.h>  // for ioctl
 #include <sys/mman.h>
 #include <linux/fb.h>   // for fb_var_screeninfo, FBIOGET_VSCREENINFO
-#include "bitmap.h"
 
-#define FBDEV_FILE  "/dev/fb0"
-#define BIT_VALUE_24BIT   24
 
+#include "libBitmap.h"
+#include "bitmapFileHeader.h"
 static char *pDib;
-static int fbfd;
-static int fbHeight = 0;
-static int fbWidth = 0;
-static unsigned long *pfbmap;
-static struct fb_var_screeninfo fbInfo;
-static struct fb_fix_screeninfo fbFixInfo;
-static int currentEmptyBufferPos = 0; //1 Pixel 4Byte Framebuffer
+//Read BMP from filename, to data, pDib, with cols, rows.
 
-#define PFBSIZE 			(fbHeight*fbWidth*sizeof(unsigned long)*2)	//Double Buffering
-#define DOUBLE_BUFF_START	(fbHeight*fbWidth)	///Double Swaping
-
-int show_bmp(char *path){
+int show_bmp(char *path)
+{
+	
     int screen_width;
-	int screen_height;
-	int bits_per_pixel;
-	int line_length;
-	int cols = 0, rows = 0;
-	char* data;
+    int screen_height;
+    int bits_per_pixel;
+    int line_length;
+    int cols = 0, rows = 0;
+	char *data;
 
-    if(fb_init(&screen_width, &screen_height, &bits_per_pixel, &line_length) <0 ){
-        printf("FrameBuffer init fail\r\n");
-        return 0;
-    }
 
-    fb_clear();
-    if(read_bmp(path, &data, &cols, &rows) <0 ){
-        printf("file open fail\r\n");
-        return 0;
-    }
+    printf("=================================\n");
+    printf("Frame buffer Application - Bitmap\n");
+    printf("=================================\n\n");
 
-    fb_write(data, cols, rows);
-    close_bmp();
-    fb_close();
+
+	//FrameBuffer init
+    if ( fb_init(&screen_width, &screen_height, &bits_per_pixel, &line_length) < 0 )
+	{
+		printf ("FrameBuffer Init Failed\r\n");
+		return 0;
+	}
+
+	//Clear FB.
+	fb_clear();
+
+	//FileRead
+    if (read_bmp(path, &data, &cols, &rows) < 0)
+	{
+		printf ("File open failed\r\n");
+		return 0;
+	}
+    printf("\tBitmapFile: %dx%d pixels\n", cols, rows);
+    printf("\tFB Screen: %dx%d\n", screen_width, screen_height);
+    printf("\tFB bits_per_pixel: %d, FB line_length: %d\n", bits_per_pixel, line_length);
+	
+	//FileWrite
+	fb_write(data, cols,rows);
+    
+	close_bmp();
+	fb_close();
     return 0;
 }
 
@@ -55,146 +66,166 @@ int read_bmp(char *filename, char **data, int *cols, int *rows)
     unsigned char   magicNum[2];
     int     nread;
     FILE    *fp;
-
+	int a;
     fp  =  fopen(filename, "rb");
     if(fp == NULL) {
         printf("ERROR\n");
-        return;
+        return -1;
     }
 
     // identify bmp file
     magicNum[0]   =   fgetc(fp);
     magicNum[1]   =   fgetc(fp);
-    printf("magicNum : %c%c\n", magicNum[0], magicNum[1]);
+    //printf("magicNum : %c%c\n", magicNum[0], magicNum[1]);
 
     if(magicNum[0] != 'B' && magicNum[1] != 'M') {
         printf("It's not a bmp file!\n");
         fclose(fp);
-        return;
+        return -1;
     }
 
     nread   =   fread(&bmpHeader.bfSize, 1, sizeof(BITMAPFILEHEADER), fp);
     size    =   bmpHeader.bfSize - sizeof(BITMAPFILEHEADER);
-    *pDib   =   (unsigned char *)malloc(size);      // DIB Header(Image Header)
-    fread(*pDib, 1, size, fp);
-    bmpInfoHeader   =   (BITMAPINFOHEADER *)*pDib;
+    pDib   =   (unsigned char *)malloc(size);      // DIB Header(Image Header)
+    a=fread(pDib, 1, size, fp);
+    bmpInfoHeader   =   (BITMAPINFOHEADER *)pDib;
 
-    printf("nread : %d\n", nread);
-    printf("size : %d\n", size);
+    //printf("nread : %d\n", nread);
+    //printf("size : %d\n", size);
 
     // check 24bit
     if(BIT_VALUE_24BIT != (bmpInfoHeader->biBitCount))     // bit value
     {
         printf("It supports only 24bit bmp!\n");
         fclose(fp);
-        return;
+        return -1;
     }
 
     *cols   =   bmpInfoHeader->biWidth;
     *rows   =   bmpInfoHeader->biHeight;
-    *data   =   (char *)(*pDib + bmpHeader.bfOffBits - sizeof(bmpHeader) - 2);
+    *data   =   (char *) ((char *)(pDib + bmpHeader.bfOffBits - sizeof(bmpHeader) - 2));
     fclose(fp);
-    return 0;
+
+	return 1;
 }
 
 int close_bmp(void)     // DIB(Device Independent Bitmap)
 {
-    free(*pDib);
-    return 0;
+    free(pDib);
+	return 1;
 }
 
-int fb_init(int *screen_width, int *screen_height, int *bits_per_pixel, int *line_length){
-    struct fb_fix_screeninfo fbfix;
+static int fbfd;
+static int fbHeight=0;	//현재 하드웨어의 사이즈
+static int fbWidth=0;	//현재 하드웨어의 사이즈
+static unsigned long   *pfbmap;	//프레임 버퍼
+static struct fb_var_screeninfo fbInfo;	//To use to do double buffering.
+static struct fb_fix_screeninfo fbFixInfo;	//To use to do double buffering.
 
-    if( (fbfd = open(FBDEV_FILE, O_RDWR)) < 0)
+
+#define PFBSIZE 			(fbHeight*fbWidth*sizeof(unsigned long)*2)	//Double Buffering
+#define DOUBLE_BUFF_START	(fbHeight*fbWidth)	///Double Swaping
+static int currentEmptyBufferPos = 0;
+//1 Pixel 4Byte Framebuffer.
+int fb_init(int * screen_width, int * screen_height, int * bits_per_pixel, int * line_length)
+{
+    struct  fb_fix_screeninfo fbfix;
+
+	if( (fbfd = open(FBDEV_FILE, O_RDWR)) < 0)
     {
         printf("%s: open error\n", FBDEV_FILE);
-        close(fbfd);
-        exit(1);
+        return -1;
     }
 
     if( ioctl(fbfd, FBIOGET_VSCREENINFO, &fbInfo) )
     {
         printf("%s: ioctl error - FBIOGET_VSCREENINFO \n", FBDEV_FILE);
-        close(fbfd);
-        exit(1);
+		close(fbfd);
+        return -1;
     }
-
-    if( ioctl(fbfd, FBIOGET_FSCREENINFO, &fbFixInfo) )
+   	if( ioctl(fbfd, FBIOGET_FSCREENINFO, &fbFixInfo) )
     {
         printf("%s: ioctl error - FBIOGET_FSCREENINFO \n", FBDEV_FILE);
         close(fbfd);
-        exit(1);
+        return -1;
     }
+	//printf ("FBInfo.YOffset:%d\r\n",fbInfo.yoffset);
+	fbInfo.yoffset = 0;
+	ioctl(fbfd, FBIOPUT_VSCREENINFO, &fbInfo);	//슉!
 
     if (fbInfo.bits_per_pixel != 32)
     {
-        fprintf(stderr, "bpp is not 32\n");
-        exit(1);
-    }
+        printf("bpp is not 32\n");
+		close(fbfd);
+        return -1;
+    }	
 
-    fbWidth = *screen_width = fbInfo.xres;
-    fbHeight = *screen_height = fbInfo.yres;
-    *bits_per_pixel = fbInfo.bits_per_pixel;
-    *line_length = fbFixInfo.line_length;
+    fbWidth = *screen_width    =   fbInfo.xres;
+    fbHeight = *screen_height   =   fbInfo.yres;
+    *bits_per_pixel  =   fbInfo.bits_per_pixel;
+    *line_length     =   fbFixInfo.line_length;
 
-    pfbmap  =   (unsigned char *)
-    mmap(0, PFBSIZE, PROT_READ|PROT_WRITE, MAP_SHARED, fbfd, 0);
-    if ((unsigned)pfbmap == (unsigned)-1)
+	pfbmap  =   (unsigned long *)
+        mmap(0, PFBSIZE, PROT_READ|PROT_WRITE, MAP_SHARED, fbfd, 0);
+	
+	if ((unsigned)pfbmap == (unsigned)-1)
     {
-        perror("fbdev mmap\n");
+        printf("fbdev mmap failed\n");
         close(fbfd);
-        exit(1);
+		return -1;
     }
-
-    #ifdef ENABLED_DOUBLE_BUFFERING 
-            currentEmptyBufferPos = DOUBLE_BUFF_START;
-    #else
-            currentEmptyBufferPos = 0;
-    #endif
-
-    return -1;
+	#ifdef ENABLED_DOUBLE_BUFFERING
+		currentEmptyBufferPos = DOUBLE_BUFF_START;	//더블버퍼링 임시 주소로 할당
+	#else
+		currentEmptyBufferPos = 0;
+	#endif
+	//printf ("CurrentEmptyBuffPos:%d\r\n",currentEmptyBufferPos);
+	return 1;
 }
 
-int fb_clear(void){
-    int coor_y = 0; int coor_x = 0;
-    for(coor_y = 0; coor_y < fbHeight; coor_y++){
-        unsigned long *ptr = pfbmap + currentEmptyBufferPos + (fbWidth * coor_y);
-        for(coor_x = 0; coor_x < fbWidth; coor_x ++){
-            *ptr ++ = 0x000000;
+void fb_clear(void)
+{
+	int coor_y = 0;
+	int coor_x = 0;
+	// fb clear - black
+    for(coor_y = 0; coor_y < fbHeight; coor_y++) 
+	{
+        unsigned long *ptr =   pfbmap + currentEmptyBufferPos + (fbWidth * coor_y);
+        for(coor_x = 0; coor_x < fbWidth; coor_x++)
+        {
+            *ptr++  =   0x000000;
         }
     }
-    #ifdef ENABLED_DOUBLE_BUFFERING
-        fb_doubleBufSwap();
-    #endif
-
-    return 0;
+	#ifdef ENABLED_DOUBLE_BUFFERING
+		fb_doubleBufSwap();
+	#endif
 }
-
-int fb_doubleBufSwap(void){
-    if(currentEmptyBufferPos == 0){
-        fbInfo.yoffset = 0;
-        currentEmptyBufferPos = DOUBLE_BUFF_START;
-    }
-    else{
-        fbInfo.yoffset = fbHeight;
-        currentEmptyBufferPos = 0;
-    }
-    ioctl(fbfd, FBIOPUT_VSCREENINFO, &fbInfo);
-    return 0;
+void fb_doubleBufSwap(void)
+{
+	if (currentEmptyBufferPos == 0)
+	{
+		fbInfo.yoffset = 0;
+		currentEmptyBufferPos = DOUBLE_BUFF_START;
+	}
+	else
+	{
+		fbInfo.yoffset = fbHeight;
+		currentEmptyBufferPos = 0;		
+	}
+	ioctl(fbfd, FBIOPUT_VSCREENINFO, &fbInfo);	//슉!
 }
-
-int fb_close(void){
-    printf("Memory UnMapped!\r\n");
-    munmap(pfbmap, PFBSIZE);
-    printf("CloseFB\r\n");
-    close(fbfd);
-    return 0;
+void fb_close(void)
+{
+	printf ("Memory UnMapped!\r\n");
+    munmap( pfbmap, PFBSIZE);
+	printf ("CloseFB\r\n");
+    close( fbfd);
 }
-
-int fb_write_reverse(char* picData, int picWidth, int picHeight){
-    int coor_x = 0; int coor_y = 0;
-    int targetHeight = (fbHeight<picHeight)?fbHeight:picHeight;	//if Screen과 파일 사이즈가 안맞으면
+void fb_write_reverse(char* picData, int picWidth, int picHeight)
+{
+	int coor_y=0;
+	int coor_x=0;
+	int targetHeight = (fbHeight<picHeight)?fbHeight:picHeight;	//if Screen과 파일 사이즈가 안맞으면
 	int targetWidth = (fbWidth<picWidth)?fbWidth:picWidth;		//if Screen과 파일 사이즈가 안맞으면
 	
 	for(coor_y = 0; coor_y < targetHeight; coor_y++) 
@@ -214,11 +245,8 @@ int fb_write_reverse(char* picData, int picWidth, int picHeight){
 	#ifdef ENABLED_DOUBLE_BUFFERING
 		fb_doubleBufSwap();
 	#endif	
-
-    return 0;
 }
-
-int fb_write(char* picData, int picWidth, int picHeight)
+void fb_write(char* picData, int picWidth, int picHeight)
 {
 	int coor_y=0;
 	int coor_x=0;
@@ -242,6 +270,4 @@ int fb_write(char* picData, int picWidth, int picHeight)
 	#ifdef ENABLED_DOUBLE_BUFFERING
 		fb_doubleBufSwap();
 	#endif
-
-    return 0;
 }

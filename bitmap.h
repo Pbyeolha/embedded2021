@@ -5,11 +5,10 @@ int show_bmp(char *path);
 int read_bmp(char *filename, char **data, int *cols, int *rows);
 int close_bmp(void);
 int fb_init(int *screen_width, int *screen_height, int *bits_per_pixel, int *line_length);
-int fb_clear(void);
-int fb_doubleBufSwap(void);
-int fb_close(void);
-int fb_write_reverse(char* picData, int picWidth, int picHeight);
-int fb_write(char* picData, int picWidth, int picHeight);  
+void fb_clear(void);
+void fb_doubleBufSwap(void);
+void fb_write_reverse(char* picData, int picWidth, int picHeight);
+void fb_write(char* picData, int picWidth, int picHeight);  
 
 // File Header
 typedef struct 
