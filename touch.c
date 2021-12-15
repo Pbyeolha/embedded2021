@@ -14,22 +14,22 @@
 #define EVENT_CODE_Y    ABS_Y
 #define  INPUT_DEVICE_LIST   "/dev/input/event"  //실제 디바이스 드라이버 노드파일: 뒤에 숫자가 붙음., ex)/dev/input/event5
 #define PROBE_FILE   "/proc/bus/input/devices" //PPT에 제시된 "이 파일을 까보면 event? 의 숫자를 알수 있다"는 바로 그 파일
-
-static pthread_t touchTh_id;
+static void* TouchThFunc();
+static pthread_t TouchTh_id;
 static int fd = 0;
-static void* touchThFunc();
+static void* TouchThFunc();
 static int msgID = 0;
-char touchPath[200]={0,};
-
+char inputDevPath[200]={0,};
+/*=====================================================================================================*/
 int probetouchPath(char *newPath)
 {
-   int returnValue = 0;   //touch에 해당하는 event#을 찾았나?
+   int returnValue = 0;   //button에 해당하는 event#을 찾았나?
    int number = 0;            //찾았다면 여기에 집어넣자
    FILE *fp = fopen(PROBE_FILE,"rt");   //파일을 열고
 
-   #define HAVE_TO_FIND_1    "N: Name=\"WaveShare WaveShare Touchscreen\"\n" //cat/proc/bus/input/devices 찾아야함
-   #define HAVE_TO_FIND_2      "H: Handlers=mouse0 event" //이것도 찾아야함 
-   while(!feof(fp))   //끝까지 읽어들인다.
+   #define HAVE_TO_FIND_1    "N: Name=\"WaveShare WaveShare Touchscreen\"\n"
+   #define HAVE_TO_FIND_2      "H: Handlers=mouse0 event"
+   while(!feof(fp))   //파일 끝까지 읽어들인다.
    {
       char tmpStr[200];   //200자를 읽을 수 있게 버퍼
       fgets(tmpStr,200,fp);   //최대 200자를 읽어봄
@@ -41,8 +41,7 @@ int probetouchPath(char *newPath)
       }
       if (
             (returnValue == 1) &&    //찾은 상태에서
-            (strncasecmp(tmpStr, HAVE_TO_FIND_2, strlen(HAVE_TO_FIND_2)) == 0) //Event??을 찾았으면
-         )
+            (strncasecmp(tmpStr, HAVE_TO_FIND_2, strlen(HAVE_TO_FIND_2)) == 0))
       {
          printf ("-->%s",tmpStr);
          printf("\t%c\r\n",tmpStr[strlen(tmpStr)-3]);
@@ -50,49 +49,61 @@ int probetouchPath(char *newPath)
          break;
       }
    }
+    //이 상황에서 number에는 event? 중 ? 에 해당하는 숫자가 들어가 있다.
    fclose(fp);
-   if (returnValue == 1) 
+
+   if (returnValue == 1)
       sprintf (newPath,"%s%d",INPUT_DEVICE_LIST,number);
+    //인자로 들어온 newPath 포인터에 /dev/input/event? 의 스트링을 채움
    return returnValue;
 }
-static void* touchThFunc()
+
+int TouchLibInit(void)
 {
-    TOUCH_MSG_T messageTx;
+     if ( probetouchPath(inputDevPath) == 0)
+   {
+      printf ("ERROR! File Not Found!\r\n");
+      return 0;
+   }
+     
+	fd = open(inputDevPath, O_RDONLY);
+    msgID = msgget (MESSAGE_ID, IPC_CREAT|0666);
+    pthread_create(&TouchTh_id, NULL, &TouchThFunc, NULL);
+        return msgID;
+}
+int TouchLibExit(void)
+{
+    pthread_cancel(TouchTh_id);
+    close(fd);
+}
+static void* TouchThFunc()
+{
+    TOUCH_MSG_T msgTx;
     struct input_event stEvent;
+
     while (1)
     {
-        read(fd, &stEvent, sizeof(stEvent));
-        if ( ( stEvent.type == EV_ABS) && ( stEvent.code == EVENT_CODE_X || stEvent.code == EVENT_CODE_Y))
-        {
-           if(stEvent.code == EVENT_CODE_X){
-               messageTx.messageNum = 1;
-               messageTx.touchX = stEvent.value;
-               msgsnd(msgID, &messageTx, sizeof(int), 0);
-            }
-            else{
-                messageTx.messageNum = 2;
-                messageTx.touchY = stEvent.value;
-                msgsnd(msgID, &messageTx, sizeof(int), 0);
-            }
+        read(fd, &stEvent, sizeof (stEvent));
+    if((stEvent.type==EV_ABS)&&(stEvent.code==EVENT_CODE_X||stEvent.code==EVENT_CODE_Y)){
+           // printf("%s=%d\n",stEvent.code==EVENT_CODE_X ? "X" : "Y",stEvent.value);
+
+        //if ( ( stEvent.type == EV_ABS))
+   //   {
+		if(stEvent.code == EVENT_CODE_X)
+     	{
+        msgTx.messageNum = 1;
+        msgTx.touchX = stEvent.value;
+       // printf("\n %d",msgTx.Xvalue);
+        msgsnd(msgID, &msgTx,  sizeof(msgTx) - sizeof(long int), 0);
         }
+		else //if(stEvent.code == EVENT_CODE_Y)	
+       {
+        msgTx.messageNum = 2;
+        msgTx.touchY = stEvent.value;
+      //  printf("\n %d",msgTx.Yvalue);
+        msgsnd(msgID, &msgTx,  sizeof(msgTx) - sizeof(long int), 0);
+    //    msgctl( msgID, IPC_RMID, 0);
+	   }
+      }
     }
-}
-
-int touchLibInit(void)
-{
-    if (probetouchPath(touchPath) == 0){
-      printf("File error\n");
-      return 0;
-    } 
-	fd=open (touchPath, O_RDONLY);
-	msgID = msgget (MESSAGE_ID, IPC_CREAT|0666);
-	pthread_create(&touchTh_id, NULL, touchThFunc, NULL);
-	return msgID;
-}
-
-int touchLibExit(void)
-{
-    pthread_cancel(touchTh_id);
-    close(fd);
-    printf("button finish\n");
 }

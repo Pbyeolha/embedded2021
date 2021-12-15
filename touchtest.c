@@ -9,25 +9,37 @@
 #include <fcntl.h> // for O_RDWR
 #include <sys/ioctl.h> // for ioctl
 #include "touch.h"
+static int msgID = 0;
+int Messageclean=0;
 
-int main(int argc, char *argv[]){
-    int x, y = 0; 
-    int msgID = touchLibInit();
-    int returnValue = 0; 
+int main(int argc, char *argv[])
+{
+    msgID=TouchLibInit();
+    int returnValue = 0;
+    TOUCH_MSG_T msgRx;
+  //  struct   msqid_ds msqstat;   
+ //  msgctl( msgID, IPC_STAT, &msqstat);
+   while(Messageclean != 1) //메세지비우기 
+     {
+     returnValue = msgrcv(msgID, &msgRx, sizeof(msgRx) - sizeof(long int), 0, IPC_NOWAIT); 
+     if (returnValue == -1) Messageclean = 1;
+      }
 
-    TOUCH_MSG_T messageRx;
+   while(1){
+    returnValue = msgrcv(msgID, &msgRx, sizeof(msgRx) - sizeof(long int), 0, 0);
+
+    if(msgRx.messageNum==1)
+    printf("\nx :%d \n",msgRx.touchX);
+
+    else if(msgRx.messageNum == 2)
+    printf("\ny :%d \n",msgRx.touchY);
     
-    while(1){
-        returnValue=msgrcv(msgID, &messageRx, sizeof(messageRx.messageNum), 0 , 0);
-        if(messageRx.messageNum == 1) //x좌표 
-            printf("x: %d \n", messageRx.touchX);
-        else if(messageRx.messageNum == 2) //y좌표
-            printf("y: %d \n", messageRx.touchY);
-
-        usleep(10000);
-    }
-
-    touchLibExit();
-
+    else
+    printf("other %d \n",msgRx.messageNum);
+    usleep(10000);
+     }
+   // printf( "메시지 개수는 %d 입니다.\n", msqstat.msg_qnum);
+   
+    TouchLibExit();
     return 0;
 }
