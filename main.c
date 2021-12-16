@@ -165,121 +165,338 @@ int main(int argc, char *argv[]){
     lcdtextwrite("1", "To Gamestart");
     lcdtextwrite("2", "press Home key");
     //=============Game start=============//
-    while(1){
+
     int msgID = buttonLibInit();
     //int msgIDt = touchLibInit();
     int returnValue = 0; 
-    int returnValue1 = 1;
+    int rand1, rand2, rand3, rand4;
     BUTTON_MSG_T messageRx;
 
     returnValue=msgrcv(msgID, &messageRx, sizeof(messageRx.messageNum), 0 , 0);
    
-      if(returnValue<0)
-         printf("Key input fail\n");
+    if(returnValue<0)
+    printf("Key input fail\n");
 
-      switch(messageRx.keyInput)
-        {
-            case KEY_VOLUMEUP:   printf("STAGE 4"); stage4=1;  break;
-            case KEY_HOME:      printf("GAME START"); start=1;     break;
-            case KEY_SEARCH:   printf("STAGE 2"); stage2=1;     break;
-            case KEY_BACK:      printf("STAGE 1"); stage1=1;     break;
-            case KEY_MENU:      printf("STAGE 3"); stage3=1;     break;
-            case KEY_VOLUMEDOWN:printf("GAME FINISH");break;
-        }
-        printf("\n");
-        if(start ==1){ //start
-            lcdtextwrite("1", "hello!\n");
-            lcdtextwrite("2", "Have a nice playing\n");
-        }  
+    switch(messageRx.keyInput)
+    {
+        case KEY_HOME:      printf("GAME START"); start=1;     break;
+        case KEY_BACK:      printf("GAME 1"); stage1=1;     break;
+        case KEY_SEARCH:   printf("GAME 2"); stage2=1;     break;
+        case KEY_MENU:      printf("GAME 3"); stage3=1;     break;
+        case KEY_VOLUMEUP:   printf("GAME 4"); stage4=1;  break;
+        case KEY_VOLUMEDOWN:  printf("GAME FINISH");    break;
+    }
+    printf("\n");
+    if(start ==1){ //start
+        lcdtextwrite("1", "hello!\n");
+        lcdtextwrite("2", "Press KEY_BACK button\n");
+        show_bmp("start_menual.bmp");
+    }  
 
-        if(stage1 ==1){ //stage1
-            lcdtextwrite("1", "STAGE 1\n");
-            show_bmp("stage1_menual.bmp");
-            sleep(5);
-            show_bmp("stage1_question.bmp");
-            sleep(5);
-            lcdtextwrite("2", "press button where is question's picture \n");
-            show_bmp("stage1_1.bmp");
-            fndDisp(1, 0);
+ //=============Game 1=============//
+    if(stage1 ==1){ //game1
+        rand1 = rand() % 3;
+        fndDisp(1111111, 0);
+        lcdtextwrite("1", "GAME 1");
+        lcdtextwrite("2", "Chosse same picture");
+        show_bmp("game1_menual.bmp");
+        sleep(4);
+        if(rand1 == 0){ //첫번째 사진 맞추기
+            show_bmp("game1_question1.bmp");
             sleep(3);
-            show_bmp("stage1_2.bmp");
-            fndDisp(2, 0);
-            sleep(3);
-            show_bmp("stage1_3.bmp");
-            fndDisp(3,0);
-            sleep(3);
-            
+            show_bmp("game1_1_1.bmp");
+            sleep(2);
+            show_bmp("game1_1_2.bmp");
+            sleep(2);
+            show_bmp("game1_1_3.bmp");
+            sleep(2);
             if(stage2 == 1){ //두번째 button 눌렸을 때
-                fndDisp(2, 0);
-                show_bmp("stage_correct.bmp");
-                lcdtextwrite("1", "Correct!\n");
-                lcdtextwrite("2", "Go to Next stage!\n");
+                show_bmp("correct.bmp");
+                lcdtextwrite("1", "Correct!");
+                lcdtextwrite("2", "You're right!");
             }
             else if(stage1 == 1){ //첫번째 button 눌렸을 때
-                fndDisp(1, 0);
                 show_bmp("wrong.bmp");
-                lcdtextwrite("1", "Sorry\n");
-                lcdtextwrite("2", "You're wrong\n");
+                lcdtextwrite("1", "Sorry");
+                lcdtextwrite("2", "You're wrong");
             }
             else if(stage3 == 1){ //세번째 button 눌렸을 때
-                fndDisp(3, 0);
                 show_bmp("wrong.bmp");
-                lcdtextwrite("1", "sorry\n");
-                lcdtextwrite("2", "You're wrong\n");
+                lcdtextwrite("1", "sorry");
+                lcdtextwrite("2", "You're wrong");
             }
         }
-        else if(stage2 ==1){ //stage2
-            lcdtextwrite("1", "STAGE 2\n");
-            show_bmp("stage2_menual.bmp");
-            sleep(5);
-            show_bmp("stage2_question.bmp");
-            sleep(5);
-            lcdtextwrite("2", "press button Who am I \n");
-            show_bmp("stage2_1.bmp");
-            fndDisp(1, 0);
+        else if(rand1 == 1){ //두번째 사진 맞추기
+            show_bmp("game1_question2.bmp");
             sleep(3);
-            show_bmp("stage2_2.bmp");
-            fndDisp(2, 0);
-            sleep(3);
-            show_bmp("stage2_3.bmp");
-            fndDisp(3,0);
-            sleep(3);
-            
-            if(stage1 == 1){ //첫번째 button 눌렸을 때
-                fndDisp(1, 0);
-                show_bmp("stage2_correct.bmp");
-                lcdtextwrite("1", "Correct!\n");
-                lcdtextwrite("2", "Go to Next stage!\n");
+            show_bmp("game1_2_1.bmp");
+            sleep(2);
+            show_bmp("game1_2_2.bmp");
+            sleep(2);
+            show_bmp("game1_2_3.bmp");
+            sleep(2);
+            if(stage3 == 1){ //세번째 button 눌렸을 때
+                show_bmp("correct.bmp");
+                lcdtextwrite("1", "Correct!");
+                lcdtextwrite("2", "You're right!");
+            }
+            else if(stage1 == 1){ //첫번째 button 눌렸을 때
+                show_bmp("wrong.bmp");
+                lcdtextwrite("1", "Sorry");
+                lcdtextwrite("2", "You're wrong");
             }
             else if(stage2 == 1){ //두번째 button 눌렸을 때
-                fndDisp(2, 0);
-                show_bmp("stage2_uncorrect.bmp");
-                lcdtextwrite("1", "Sorry\n");
-                lcdtextwrite("2", "You're wrong\n");
+                show_bmp("wrong.bmp");
+                lcdtextwrite("1", "sorry");
+                lcdtextwrite("2", "You're wrong");
+            }
+            else { //세번째 사진 맞추기
+            show_bmp("game1_question3.bmp");
+            sleep(3);
+            show_bmp("game1_3_1.bmp");
+            sleep(2);
+            show_bmp("game1_3_2.bmp");
+            sleep(2);
+            show_bmp("game1_3_3.bmp");
+            sleep(2);
+            if(stage1 == 1){ //첫번째 button 눌렸을 때
+                show_bmp("correct.bmp");
+                lcdtextwrite("1", "Correct!");
+                lcdtextwrite("2", "You're right!");
             }
             else if(stage3 == 1){ //세번째 button 눌렸을 때
-                fndDisp(3, 0);
-                show_bmp("stage2_uncorrect.bmp");
-                lcdtextwrite("1", "sorry\n");
-                lcdtextwrite("2", "You're wrong\n");
+                show_bmp("wrong.bmp");
+                lcdtextwrite("1", "Sorry");
+                lcdtextwrite("2", "You're wrong");
+            }
+            else if(stage2 == 1){ //두번째 button 눌렸을 때
+                show_bmp("wrong.bmp");
+                lcdtextwrite("1", "sorry");
+                lcdtextwrite("2", "You're wrong");
+            }
+        } 
+    }       
+
+ //=============Game 2=============//
+    else if(stage2 ==1){ //game2
+        rand2 = rand() % 3;
+        fndDisp(222222, 0);
+        lcdtextwrite("1", "GAME 2");
+        lcdtextwrite("2", "Who Am I");
+        show_bmp("game2_menual.bmp");
+        sleep(4);
+        if(rand1 == 0){ //첫번째 사진 맞추기
+            show_bmp("game2_question1.bmp");
+            sleep(3);
+            show_bmp("game2_1_1.bmp");
+            sleep(2);
+            show_bmp("game2_1_2.bmp");
+            sleep(2);
+            show_bmp("game2_1_3.bmp");
+            sleep(2);
+            if(stage1 == 1){ //cjt번째 button 눌렸을 때
+                show_bmp("correct.bmp");
+                lcdtextwrite("1", "Correct!");
+                lcdtextwrite("2", "You're right!");
+            }
+            else if(stage2 == 1){ //두번째 button 눌렸을 때
+                show_bmp("wrong.bmp");
+                lcdtextwrite("1", "Sorry");
+                lcdtextwrite("2", "You're wrong");
+            }
+            else if(stage3 == 1){ //세번째 button 눌렸을 때
+                show_bmp("wrong.bmp");
+                lcdtextwrite("1", "sorry");
+                lcdtextwrite("2", "You're wrong");
             }
         }
-        else if(stage3 ==1){ //stage3
- 
-                ledOnOff(6, 1);
-
-            fndDisp(4, 0); //그림 4개 맞춰야 함
-            show_bmp("flower.bmp");
-        }
-        else if(stage4 ==1){ //stage4
-
-                ledOnOff(8, 1);
-
- 
-            fndDisp(5, 0); //그림 5개 맞춰야 함
-            show_bmp("flower.bmp");
-        }
+        else if(rand1 == 1){ //두번째 사진 맞추기
+            show_bmp("game2_question2.bmp");
+            sleep(3);
+            show_bmp("game2_2_1.bmp");
+            sleep(2);
+            show_bmp("game2_2_2.bmp");
+            sleep(2);
+            show_bmp("game2_2_3.bmp");
+            sleep(2);
+            if(stage3 == 1){ //세번째 button 눌렸을 때
+                show_bmp("correct.bmp");
+                lcdtextwrite("1", "Correct!");
+                lcdtextwrite("2", "You're right!");
+            }
+            else if(stage1 == 1){ //첫번째 button 눌렸을 때
+                show_bmp("wrong.bmp");
+                lcdtextwrite("1", "Sorry");
+                lcdtextwrite("2", "You're wrong");
+            }
+            else if(stage2 == 1){ //두번째 button 눌렸을 때
+                show_bmp("wrong.bmp");
+                lcdtextwrite("1", "sorry");
+                lcdtextwrite("2", "You're wrong");
+            }
+            else { //세번째 사진 맞추기
+            show_bmp("game2_question3.bmp");
+            sleep(3);
+            show_bmp("game2_3_1.bmp");
+            sleep(2);
+            show_bmp("game2_3_2.bmp");
+            sleep(2);
+            show_bmp("game2_3_3.bmp");
+            sleep(2);
+            if(stage2 == 1){ //두번째 button 눌렸을 때
+                show_bmp("correct.bmp");
+                lcdtextwrite("1", "Correct!");
+                lcdtextwrite("2", "You're right!");
+            }
+            else if(stage3 == 1){ //세번째 button 눌렸을 때
+                show_bmp("wrong.bmp");
+                lcdtextwrite("1", "Sorry");
+                lcdtextwrite("2", "You're wrong");
+            }
+            else if(stage1 == 1){ //첫번째 button 눌렸을 때
+                show_bmp("wrong.bmp");
+                lcdtextwrite("1", "sorry");
+                lcdtextwrite("2", "You're wrong");
+            }
+        } 
     }
+
+ //=============Game 3=============//
+    else if(stage3 ==1){ //game3
+        rand3 = rand() % 3;
+        fndDisp(333333, 0);
+        lcdtextwrite("1", "GAME 3");
+        lcdtextwrite("2", "Spot the Difference");
+        show_bmp("game3_menual.bmp");
+        sleep(4);
+        if(rand1 == 0){ //첫번째 사진 맞추기
+            show_bmp("game3_question1.bmp");
+            sleep(3);
+            show_bmp("game3_1_1.bmp");
+            sleep(2);
+            show_bmp("game3_1_2.bmp");
+            sleep(2);
+            show_bmp("game3_1_3.bmp");
+            sleep(2);
+            if(stage1 == 1){ //첫번째, 틀린 개수 2개
+                show_bmp("correct.bmp");
+                lcdtextwrite("1", "Correct!");
+                lcdtextwrite("2", "You're right!");
+            }
+            else if(stage2 == 1){ //두번째, 틀린 개수 3개
+                show_bmp("wrong.bmp");
+                lcdtextwrite("1", "Sorry");
+                lcdtextwrite("2", "You're wrong");
+            }
+            else if(stage3 == 1){ //세번째, 틀린 개수 4개
+                show_bmp("wrong.bmp");
+                lcdtextwrite("1", "sorry");
+                lcdtextwrite("2", "You're wrong");
+            }
+        }
+        else if(rand3 == 1){ //두번째 사진 맞추기
+            show_bmp("game3_question2.bmp");
+            sleep(3);
+            show_bmp("game3_2_1.bmp");
+            sleep(2);
+            show_bmp("game3_2_2.bmp");
+            sleep(2);
+            show_bmp("game3_2_3.bmp");
+            sleep(2);
+            if(stage3 == 1){ //세번째, 틀린 개수 4개
+                show_bmp("correct.bmp");
+                lcdtextwrite("1", "Correct!");
+                lcdtextwrite("2", "You're right!");
+            }
+            else if(stage1 == 1){ //첫번째, 틀린 개수 2개
+                show_bmp("wrong.bmp");
+                lcdtextwrite("1", "Sorry");
+                lcdtextwrite("2", "You're wrong");
+            }
+            else if(stage2 == 1){ //두번째, 틀린 개수 3개
+                show_bmp("wrong.bmp");
+                lcdtextwrite("1", "sorry");
+                lcdtextwrite("2", "You're wrong");
+            }
+        else { //세번째 사진 맞추기
+            show_bmp("game3_question3.bmp");
+            sleep(3);
+            show_bmp("game3_3_1.bmp");
+            sleep(2);
+            show_bmp("game3_3_2.bmp");
+            sleep(2);
+            show_bmp("game3_3_3.bmp");
+            sleep(2);
+            if(stage2 == 1){ //세번째, 틀린 개수 3개
+                show_bmp("correct.bmp");
+                lcdtextwrite("1", "Correct!");
+                lcdtextwrite("2", "You're right!");
+            }
+            else if(stage1 == 1){ //첫번째, 틀린 개수 2개
+                show_bmp("wrong.bmp");
+                lcdtextwrite("1", "Sorry");
+                lcdtextwrite("2", "You're wrong");
+            }
+            else if(stage3 == 1){ //두번째, 틀린 개수 4개
+                show_bmp("wrong.bmp");
+                lcdtextwrite("1", "sorry");
+                lcdtextwrite("2", "You're wrong");
+            }
+        } 
+    }
+ //=============Game 4=============//
+    else if(stage4 ==1){ //game4
+        rand4 = rand() % 3; //random으로 0, 1, 2생성
+        //구슬 개수 0, 3, 4
+        fndDisp(444444, 0);
+        lcdtextwrite("1", "GAME 4");
+        lcdtextwrite("2", "Odd or Even");
+        show_bmp("game4_menual.bmp");;
+        sleep(4);
+        if(rand4 == 0){
+            show_bmp("game4_question1.bmp"); //0개
+            sleep(3);
+            if(stage1 == 1){ //첫번째 버튼 눌렸을 때
+                lcdtextwrite("1", "You select");
+                lcdtextwrite("2", "Odd");
+                show_bmp("wrong.bmp"); //틀렸습니다
+            }
+            else if(stage2 == 1){
+                lcdtextwrite("1", "You select");
+                lcdtextwrite("2", "Even");
+                show_bmp("right_1.bmp"); //맞았고, 손바닥 펴진 상태 (0개 있는 거 알려줌)
+            }
+        }
+        else if(rand4 == 1) {
+            show_bmp("game4_question2.bmp"); //3개
+            sleep(3);
+            if(stage1==1){
+                lcdtextwrite("1", "You select");
+                lcdtextwrite("2", "Odd");
+                show_bmp("right_2.bmp");
+            }
+            else if(stage2 == 1){
+                lcdtextwrite("1", "You select");
+                lcdtextwrite("2", "Even");
+                show_bmp("wrong.bmp");
+            }
+        }
+        else {
+            show_bmp("game4_question3.bmp"); //4개
+            sleep(3);
+            if(stage1==1){
+                lcdtextwrite("1", "You select");
+                lcdtextwrite("2", "Odd");
+                show_bmp("wrong.bmp");
+            }
+            else if(stage2 ==1){
+                lcdtextwrite("1", "You select");
+                lcdtextwrite("2", "Even");
+                show_bmp("right_3.bmp");
+            }
+        }    
+    }
+    
 
     //=============exit=============//
     ledLibExit();
