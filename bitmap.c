@@ -9,9 +9,10 @@
 #include <linux/fb.h>   // for fb_var_screeninfo, FBIOGET_VSCREENINFO
 
 
-#include "libBitmap.h"
+#include "libbmp.h"
 #include "bitmapFileHeader.h"
 static char *pDib;
+#define FBDEV_FILE "/dev/fb0"
 //Read BMP from filename, to data, pDib, with cols, rows.
 
 int show_bmp(char *path)
