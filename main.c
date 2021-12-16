@@ -14,7 +14,6 @@
 #include "textlcd.h"
 #include "buzzer.h"
 #include "fnd.h"
-#include "touch.h"
 #include "bitmap.h"
 
 #define  INPUT_DEVICE_LIST   "/dev/input/event"
@@ -24,7 +23,6 @@
 
 int stage1, stage2, stage3, stage4 = 0;
 int start = 0;
-int x, y = 0; 
 char filename[200] = {0,};
 
 static void *thread_song()
@@ -54,7 +52,7 @@ static void *thread_song()
     buzzerPlaySong(2); //미
     sleep(1);
     buzzerStopSong();
-
+    /*
     buzzerPlaySong(1); //레
     sleep(1);
     buzzerStopSong();
@@ -150,8 +148,9 @@ static void *thread_song()
     buzzerPlaySong(0); //도
     sleep(1);
     buzzerStopSong();
-    }
+    */
 }
+
 
 int main(int argc, char *argv[]){
     pthread_t thread[2];
@@ -168,7 +167,7 @@ int main(int argc, char *argv[]){
     //=============Game start=============//
     while(1){
     int msgID = buttonLibInit();
-    int msgIDt = touchLibInit();
+    //int msgIDt = touchLibInit();
     int returnValue = 0; 
     int returnValue1 = 1;
     BUTTON_MSG_T messageRx;
@@ -220,7 +219,7 @@ int main(int argc, char *argv[]){
                 fndDisp(1, 0);
                 show_bmp("wrong.bmp");
                 lcdtextwrite("1", "Sorry\n");
-                lcdtextwrite("2", "You're wrong\n")
+                lcdtextwrite("2", "You're wrong\n");
             }
             else if(stage3 == 1){ //세번째 button 눌렸을 때
                 fndDisp(3, 0);
@@ -256,7 +255,7 @@ int main(int argc, char *argv[]){
                 fndDisp(2, 0);
                 show_bmp("stage2_uncorrect.bmp");
                 lcdtextwrite("1", "Sorry\n");
-                lcdtextwrite("2", "You're wrong\n")
+                lcdtextwrite("2", "You're wrong\n");
             }
             else if(stage3 == 1){ //세번째 button 눌렸을 때
                 fndDisp(3, 0);
@@ -270,13 +269,7 @@ int main(int argc, char *argv[]){
                 ledOnOff(6, 1);
 
             fndDisp(4, 0); //그림 4개 맞춰야 함
-            show_bmp("./flower.bmp");
-            returnValue1 = msgrcv(msgIDt, &messageRxt, sizeof(messageRxt.messageNum), 0, 0);
-            if(messageRxt.messageNum == 1) //x좌표 
-                printf("x: %d \n", messageRxt.touchX);
-            else if(messageRxt.messageNum == 2) //y좌표
-                printf("y: %d \n", messageRxt.touchY);
-
+            show_bmp("flower.bmp");
         }
         else if(stage4 ==1){ //stage4
 
@@ -284,13 +277,7 @@ int main(int argc, char *argv[]){
 
  
             fndDisp(5, 0); //그림 5개 맞춰야 함
-            show_bmp("./flower.bmp");
-            returnValue1 = msgrcv(msgIDt, &messageRxt, sizeof(messageRxt.messageNum), 0, 0);
-            if(messageRxt.messageNum == 1) //x좌표 
-                printf("x: %d \n", messageRxt.touchX);
-            else if(messageRxt.messageNum == 2) //y좌표
-                printf("y: %d \n", messageRxt.touchY);
-
+            show_bmp("flower.bmp");
         }
     }
 
@@ -299,7 +286,7 @@ int main(int argc, char *argv[]){
     buttonLibExit();
     textlcdLibexit();
     buzzerExit();
-    touchLibExit();
+    //touchLibExit();
 
     return 0;
 }
