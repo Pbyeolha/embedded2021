@@ -46,7 +46,7 @@ int lcdtextwrite(char *str1, char *str2){
     write(fd,&stlcd,sizeof(stTextLCD)); 
     
 }
-int textlcdLibexit(void)
+int textlcdLibExit(void)
 {
 	close(fd);
    return 0;

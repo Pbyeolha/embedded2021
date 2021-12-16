@@ -8,7 +8,7 @@ typedef struct{
     int touchY;
 }TOUCH_MSG_T;
 
-int touchLibInit(void);
-int touchLibExit(void);
+int TouchLibInit(void);
+int TouchLibExit(void);
 
 #endif

@@ -12,6 +12,6 @@ typedef struct FNDWriteDataForm_tag
 	char	DataValid[FND_DATA_BUFF_LEN];	
 }stFndWriteForm,*pStFndWriteForm;
 
-int fnDisp(int num, int dotflag);
+int fndDisp(int num, int dotflag);
 
 #endif// __FND_DRV_H__
