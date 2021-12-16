@@ -372,12 +372,6 @@ int main(int argc, char *argv[]){
         if(rand1 == 0){ //첫번째 사진 맞추기
             show_bmp("game3_question1.bmp");
             sleep(3);
-            show_bmp("game3_1_1.bmp");
-            sleep(2);
-            show_bmp("game3_1_2.bmp");
-            sleep(2);
-            show_bmp("game3_1_3.bmp");
-            sleep(2);
             if(stage1 == 1){ //첫번째, 틀린 개수 2개
                 show_bmp("correct.bmp");
                 lcdtextwrite("1", "Correct!");
@@ -397,12 +391,6 @@ int main(int argc, char *argv[]){
         else if(rand3 == 1){ //두번째 사진 맞추기
             show_bmp("game3_question2.bmp");
             sleep(3);
-            show_bmp("game3_2_1.bmp");
-            sleep(2);
-            show_bmp("game3_2_2.bmp");
-            sleep(2);
-            show_bmp("game3_2_3.bmp");
-            sleep(2);
             if(stage3 == 1){ //세번째, 틀린 개수 4개
                 show_bmp("correct.bmp");
                 lcdtextwrite("1", "Correct!");
@@ -421,12 +409,6 @@ int main(int argc, char *argv[]){
         else { //세번째 사진 맞추기
             show_bmp("game3_question3.bmp");
             sleep(3);
-            show_bmp("game3_3_1.bmp");
-            sleep(2);
-            show_bmp("game3_3_2.bmp");
-            sleep(2);
-            show_bmp("game3_3_3.bmp");
-            sleep(2);
             if(stage2 == 1){ //세번째, 틀린 개수 3개
                 show_bmp("correct.bmp");
                 lcdtextwrite("1", "Correct!");
