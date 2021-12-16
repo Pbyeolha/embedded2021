@@ -10,7 +10,7 @@ libMyPeri.a: button.o led.o buzzer.o fnd.o textlcd.o bitmap.o touch.o
 	$(AR) rc libMyPeri.a button.o led.o buzzer.o fnd.o textlcd.o bitmap.o touch.o
 
 touch.o: touch.c touch.h
-	$(CC) -c touch.c -o touch.o
+	$(CC) -c touch.c -o touch.o -lpthread
 
 bitmap.o: bitmap.c bitmap.h
 	$(CC) -c bitmap.c -o bitmap.o
